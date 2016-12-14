@@ -38,10 +38,9 @@ local.properties
 .settings/
 .loadpath
 .recommenders
-# Eclipse Core
-.project
 
 ### Bower ###
+src/main/resources/static/lib/
 bower_components
 .bower-cache
 .bower-registry
