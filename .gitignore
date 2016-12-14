@@ -40,7 +40,7 @@ local.properties
 .recommenders
 
 ### Bower ###
-src/main/resources/static/lib/
+src/main/resources/static/lib/*
 bower_components
 .bower-cache
 .bower-registry
