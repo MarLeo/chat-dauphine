@@ -1,5 +1,9 @@
 package com.dauphine.chat.domain;
 
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -11,13 +15,12 @@ public class ChatMessage {
 
         private String message;
         private String username;
-        private Calendar dateTime;
-        private DateFormat datetimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        private LocalDateTime date;
+        private DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d MMMM, yyyy, HH:mm:ss");
 
-        /* com.sun.xml.internal.bind.v2.TODO: refaire la date avec joda */
 
         public ChatMessage() {
-            this.dateTime = Calendar.getInstance();
+            this.date = LocalDateTime.now();
         }
 
         public String getMessage() {
@@ -37,7 +40,7 @@ public class ChatMessage {
         }
 
         public String getDateTime(){
-            return datetimeFormat.format(dateTime.getTime());
+            return date.toString(dateTimeFormatter);
         }
 
     @Override

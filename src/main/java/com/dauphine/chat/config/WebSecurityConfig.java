@@ -1,5 +1,6 @@
 package com.dauphine.chat.config;
 
+import com.dauphine.chat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -26,6 +27,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String SECURE_ADMIN_PASSWORD = "rockandroll";
 
+    @Autowired UserService userService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -40,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/js/**", "/lib/**", "/images/**", "/css/**", "/index.html", "/", "/home/").permitAll()
+                .antMatchers("/js/**", "/lib/**", "/images/**", "/css/**", "/index.html", "/", "/home/*").permitAll()
                 .antMatchers("/websocket").hasRole("ADMIN")
                 .anyRequest().authenticated();
 

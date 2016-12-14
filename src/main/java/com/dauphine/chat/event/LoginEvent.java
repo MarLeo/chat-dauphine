@@ -15,13 +15,12 @@ public class LoginEvent {
        private String username;
        private LocalDateTime date;
        private DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d MMMM, yyyy, HH:mm:ss");
-       //private Date time;
 
 
         public LoginEvent(final String username) {
             this.username = username;
             this.date = LocalDateTime.now();
-            //time = new Date();
+
         }
 
         public String getUsername() {
@@ -41,15 +40,6 @@ public class LoginEvent {
                 ", date=" + this.getDate() +
                 '}';
     }
-
-        /*public Date getTime() {
-            return time;
-        }
-
-        public void setTime(final Date time) {
-            this.time = time;
-        }
-        */
 
 
 
