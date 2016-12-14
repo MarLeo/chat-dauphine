@@ -18,7 +18,7 @@ Windows
 
 ```sh
 C:\>npm install -g bower
-
+```
 
 ## Récupérer le projet depuis Github
 
