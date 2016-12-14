@@ -25,3 +25,29 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+### Eclipse ###
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+# Eclipse Core
+.project
+
+### Bower ###
+bower_components
+.bower-cache
+.bower-registry
+.bower-tmp
+
+# Package Files #
+*.jar
+*.war
+*.ear

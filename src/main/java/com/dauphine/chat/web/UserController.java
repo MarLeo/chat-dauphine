@@ -53,7 +53,7 @@ public class UserController {
         }
 
 
-        @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+        /*@RequestMapping(method = RequestMethod.GET, produces = "application/json")
         public ResponseEntity<List<Document>> findAllUsers() {
             LOGGER.log(Level.INFO, String.format("find all users"));
             if (userService.findAll().isEmpty())
@@ -73,7 +73,7 @@ public class UserController {
         public ResponseEntity<DeleteResult> deleteUser(@PathVariable("username") final String username) {
             LOGGER.log(Level.INFO, String.format("deleting user with username %s", username));
             return new ResponseEntity<DeleteResult>(userService.deleteUser(username), HttpStatus.NO_CONTENT);
-        }
+        }*/
 
 
 

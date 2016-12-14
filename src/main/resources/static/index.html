@@ -1,47 +1,286 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="springChat">
+<html>
+
 <head>
-    <meta charset="utf-8" />
-    <title>Login</title>
+	<title>Home</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="Baweu/Belgacem/Sylla/Tchokonthe">
 
-    <!-- Loading Bootstrap -->
-    <link href="lib/flat-ui/dist/css/vendor/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="lib/materialize/dist/css/materialize.min.css" media="screen,projection"/>
+	<link rel="stylesheet" href="lib/sweetalert2/dist/sweetalert2.min.css"/>
+	<link rel="stylesheet" href="css/style.css"/>
 
-    <!-- Loading Flat UI -->
-    <link href="lib/flat-ui/dist/css/flat-ui.css" rel="stylesheet">
-
-    <link href="css/chat.css" rel="stylesheet">
+	<script src="lib/jquery/dist/jquery.min.js"></script>
+	<!-- for IE support -->
+	<script src="lib/es6-promise/es6-promise.auto.min.js"></script>
+	<script src="lib/sweetalert2/dist/sweetalert2.min.js"></script>
+	<script src="lib/materialize/dist/js/materialize.min.js"></script>
+	<script src="lib/jquery-validation/dist/jquery.validate.min.js"></script>
+	<script src="lib/zxcvbn/dist/zxcvbn.js"></script>
+	<script src="https://www.google.com/recaptcha/api.js"></script>
+	<script src="lib/particles.js/particles.min.js"></script>
+	<script src="js/app.js"></script>
 </head>
+
 <body>
-<div class="container">
-    <div class="login">
-        <div class="login-screen">
-            <div class="login-icon">
-                <h4>Welcome to <small>Chat Dauphine WebSocket</small></h4>
-            </div>
 
-            <div class="login-form">
-                <p><small style="color:#666">Enter a nickname to join. If you want to become admin use the password 'rockandroll'</small></p>
-                <form method="post">
-                    <div class="form-group">
-                        <input type="text" class="form-control login-field" placeholder="Enter your name" name="username" />
-                        <label class="login-field-icon fui-user" for="login-name"> Username</label>
-                    </div>
+	<div id="loader-wrapper">
+			<div id="loader"></div>
+			<div class="loader-section section-left"></div>
+			<div class="loader-section section-right"></div>
+	</div>
 
-                    <div class="form-group">
-                        <input type="password" class="form-control login-field" name="password" />
-                        <label class="login-field-icon fui-lock" for="login-pass"> Admin password </label>
-                    </div>
+	<header>
 
-                    <input class="btn btn-primary btn-lg btn-block"  type="submit" value="Log In"/>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /.container -->
+		<div class="navbar-fixed">
+			<nav>
+				<div class="nav-wrapper blue-grey darken-4">
+					<a href="#" data-activates="slide-out" class="button-collapse"></a>
+					<a href="#" class="brand-logo"><i class="material-icons">forum</i>Chat Dauphine</a>
+					<div class="search-bar hide-on-med-and-down" style="display: none;">
+						<div class="input-field">
+							<input id="search" type="search" class="search-input" placeholder="Search" required>
+							<label for="search"><i class="material-icons">search</i></label>
+							<i class="material-icons">close</i>
+						</div>
+					</div>
+					<ul id="nav-mobile" class="right">
+						<!--li><a href="">IF <span class="new badge">7</span></a></li>
+                        <li><a href="">ID <span class="new badge">9</span></a></li>
+                        <li><a href="">SITN <span class="new badge">5</span></a></li-->
+						<li>
+							<!-- TODO move close button to sideNav & add notif bar -->
+							<a id="close" style="display: none;"><i class="material-icons">power_settings_new</i></a></li>
+						<li>
+							<div id="loading" class="preloader-wrapper active" style="display: none;">
+								<div class="spinner-layer spinner-green-only">
+									<div class="circle-clipper left">
+										<div class="circle"></div>
+									</div>
+									<div class="gap-patch">
+										<div class="circle"></div>
+									</div>
+									<div class="circle-clipper right">
+										<div class="circle"></div>
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</div>
 
+	</header>
 
+	<ul id="slide-out" class="side-nav fixed leftside-navigation ps-container ps-active-y" style="display: none;">
+		<li>
+			<div class="userView">
+				<div class="background">
+					<img src="img/dark-background.jpg">
+				</div>
+				<a href="#!user"><img class="circle" src="img/user.ico"></a>
+				<a href="#!name"><span class="white-text name">John Doe</span></a>
+				<!-- a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">john.doe@gmail.com<i class="material-icons right">arrow_drop_down</i></a-->
+				<li class="no-padding">
+					<ul class="collapsible collapsible-accordion">
+						<li>
+							<div class="collapsible-header waves-effect email">john.doe@gmail.com<i class="material-icons right">arrow_drop_down</i></div>
+							<div class="collapsible-body">
+								<ul>
+									<li><a href="#!">Profil</a></li>
+									<li><a href="#!">Settings</a></li>
+									<li><a href="#!">Help</a></li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+				</li>
+			</div>
+		</li>
+		<li>
+			<div class="divider"></div>
+		</li>
+		<li><a class="subheader center">Rooms</a></li>
+		<li class="no-padding">
+			<ul class="collapsible collapsible-accordion">
+				<li>
+					<div class="collapsible-header waves-effect">IF<i class="material-icons right">arrow_drop_down</i></div>
+					<div class="collapsible-body">
+						<ul>
+							<li><a href="#!">martin</a></li>
+							<li><a href="#!">mohamed</a></li>
+							<li><a href="#!">marcel</a></li>
+							<li><a href="#!">adam</a></li>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</li>
+		<li class="no-padding">
+			<ul class="collapsible collapsible-accordion">
+				<li>
+					<div class="collapsible-header waves-effect">ID<i class="material-icons right">arrow_drop_down</i></div>
+					<div class="collapsible-body">
+						<ul>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</li>
+		<li class="no-padding">
+			<ul class="collapsible collapsible-accordion">
+				<li>
+					<div class="collapsible-header waves-effect">SITN<i class="material-icons right">arrow_drop_down</i></div>
+					<div class="collapsible-body">
+						<ul>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</li>
+	</ul>
+
+	<section id="content">
+		<div id="particles-js" class="container">
+			<div class="row">
+				<div id="home" class="section container" style="display: block;">
+					<div class="row">
+						<h2 class="title">Sign in</h2>
+						<form class="formValidate" id="login-form">
+							<div class="input-field col s12 m6">
+								<i class="material-icons prefix">email</i>
+								<input id="mail" type="email" name="mail">
+								<label for="mail">Email</label>
+							</div>
+							<div class="input-field col s12 m6">
+								<i class="material-icons prefix">lock</i>
+								<input id="epassword" type="password" name="epassword">
+								<label for="epassword">Password</label>
+							</div>
+							<div class="row col s12">
+								<div class="input-field">
+									<i class="material-icons prefix">markunread_mailbox</i>
+									<select id="room" name="room">
+										<option value="" disabled selected>Choose your room</option>
+										<option value="if">IF</option>
+										<option value="id">ID</option>
+										<option value="sitn">SITN</option>
+										</select>
+									<label for="room">Room</label>
+								</div>
+							</div>
+							<div class="row col s12">
+								<a id="enter" class="waves-effect waves-light btn"><i
+							class="material-icons right">input</i>Login</a>
+							</div>
+							<div class="row col s12">
+								<a id="registerBtn" class="waves-effect waves-light btn"><i
+							class="material-icons right">launch</i>Register</a>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<div id="register" class="section container" style="display: none;">
+					<h2 class="title">Register</h2>
+					<form class="col s12 formValidate" id="register-form">
+						<div class="input-field">
+							<i class="material-icons prefix">email</i>
+							<input id="email" type="email" name="email">
+							<label for="email">Email</label>
+						</div>
+						<div class="input-field">
+							<i class="material-icons prefix">lock</i>
+							<input id="rpassword" type="password" name="rpassword">
+							<label for="rpassword">Password</label>
+						</div>
+						<div id="password-strength" class="progress" style="display: none;">
+							<div class="determinate" style="width: 0%"></div>
+							<!--TODO label -->
+							<label id="pstrength"></label>
+						</div>
+						<div class="input-field">
+							<i class="prefix"></i>
+							<input id="rconfirm" type="password" name="rconfirm"> <label for="rconfirm">Confirm password</label>
+						</div>
+						<div class="input-field">
+							<i class="material-icons prefix">account_circle</i> <input id="username" type="text" name="login"> <label for="username">Username</label>
+						</div>
+						<div class="input-field">
+							<i class="material-icons prefix">perm_contact_calendar</i> <input id="birthdate" type="date" name="birthdate" class="datepicker"> <label for="birthdate">Birthdate</label>
+						</div>
+						<div class="row">
+							<div id="gender" name="gender" class="input-field col s12">
+								<i class="prefix"> <svg style="width: 40px; height: 40px"
+								viewBox="0 0 24 24">
+                            <path fill="#000000"
+									d="M17.58,4H14V2H21V9H19V5.41L15.17,9.24C15.69,10.03 16,11 16,12C16,14.42 14.28,16.44 12,16.9V19H14V21H12V23H10V21H8V19H10V16.9C7.72,16.44 6,14.42 6,12A5,5 0 0,1 11,7C12,7 12.96,7.3 13.75,7.83L17.58,4M11,9A3,3 0 0,0 8,12A3,3 0 0,0 11,15A3,3 0 0,0 14,12A3,3 0 0,0 11,9Z" />
+                          </svg>
+						</i>
+								<p class="col s3 offset-s3">
+									<input name="sex" type="radio" id="male" /> <label for="male">Male</label>
+								</p>
+								<p class="col s3">
+									<input name="sex" type="radio" id="female" /> <label for="female">Female</label>
+								</p>
+								<label for="gender">Gender</label>
+							</div>
+						</div>
+						<div class="input-field">
+							<i class="material-icons prefix">phone</i> <input id="telephone" type="tel" name="telephone"> <label for="telephone">Phone</label>
+						</div>
+						<div class="row col s12 m6">
+							<a id="valid" class="waves-effect waves-light btn"><i
+						class="material-icons right">done</i>Submit</a>
+						</div>
+					</form>
+				</div>
+
+				<div id="chat" class="section container col" style="display: none;">
+					<h2 id="login-room" class="title"></h2>
+					<ul id="conv" class="chat collection">
+						<li class="collection-item">
+							<strong>François Hollande</strong>
+							<small class="right">28/11/2016 17:13:37</small>
+							<p>Yop !</p>
+						</li>
+						<li class="collection-item">
+							<small>28/11/2016 17:17:37</small>
+							<strong class="right">Nicolas Sarkozy</strong>
+							<p style="text-align: right">Wesh</p>
+						</li>
+					</ul>
+
+					<div class="row">
+						<div class="col s12">
+							<div class="divider"></div>
+							<div id="msend" class="progress" style="display: none;">
+								<div class="indeterminate"></div>
+							</div>
+							<div class="row">
+								<!-- TODO Resize height -->
+								<div class="input-field col s12 m6">
+									<i class="material-icons prefix">comment</i>
+									<textarea id="msg" class="materialize-textarea"></textarea>
+									<label for="msg">Write ...</label>
+								</div>
+								<a id="bsend" class="btn waves-effect waves-light col s12 m6">Send
+							<i class="material-icons right">send</i>
+						</a>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</section>
 
 </body>
+
 </html>

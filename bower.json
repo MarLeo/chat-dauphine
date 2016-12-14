@@ -3,13 +3,11 @@
   "version": "0.1.2",
   "authors": ["Martin Tchokonthe <martintchokonthe@yahoo.fr>"],
   "dependencies": {
-	"jquery": "2.1.4",
-    "angular": "1.4.1",
-    "angular-animate": "1.4.1",
-    "angularjs-toaster": "0.4.15",
-    "angularjs-scroll-glue": "0.0.1",
-    "sockjs": "~0.3.4",
-    "stomp": "stomp-websocket#~2.3.4",
-    "flat-ui": "2.2.2"
+    "jquery": "^3.1.1",
+    "jquery-validation": "^1.15.1",
+    "materialize": "^0.97.8",
+    "particles.js": "^2.0.0",
+    "zxcvbn": "^4.4.1",
+    "sweetalert2": "^6.2.0"
   }
 }
