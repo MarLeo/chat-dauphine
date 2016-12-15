@@ -2,38 +2,39 @@ package com.dauphine.chat.domain;
 
 
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Created by marti on 13/12/2016.
  */
 public class User {
 
-        private String mail;
-        private String username;
-        private String password;
-        private LocalDate birthday;
-        private String gender;
-        private Integer phone;
+         private String mail;
+         private String username;
+         private String password;
+         private String birthday;
+         private String gender;
+         private String phone;
 
-        private DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d/MM/YYYY");
+         public User() {
 
-        public User(final String mail, final String username, final String password, final LocalDate birthday, final String gender, final Integer phone) {
+         }
+
+        public User(final String mail, final String username, final String password, final String birthday, final String gender, final String phone) {
                 this.mail = mail;
                 this.username = username;
                 this.password = password;
                 this.birthday = birthday;
                 this.gender = gender;
                 this.phone = phone;
+
         }
 
         public String getMail() {
-                return mail;
+            return mail;
         }
 
-        public void setMail(final String mail) {
-                this.mail = mail;
+        public void setMail(String mail) {
+            this.mail = mail;
         }
 
         public String getUsername() {
@@ -52,6 +53,14 @@ public class User {
                 this.password = password;
         }
 
+        public String getBirthday() {
+            return birthday;
+        }
+
+        public void setBirthday(String birthday) {
+            this.birthday = birthday;
+        }
+
         public String getGender() {
             return gender;
         }
@@ -60,28 +69,23 @@ public class User {
             this.gender = gender;
         }
 
-        public Integer getPhone() {
+        public String getPhone() {
             return phone;
         }
 
-        public void setPhone(Integer phone) {
+        public void setPhone(String phone) {
             this.phone = phone;
         }
 
-        public String getBirthday() {
-            return birthday.toString(dateTimeFormatter);
+        @Override
+        public String toString() {
+            return "User{" +
+                    "mail='" + mail + '\'' +
+                    ", username='" + username + '\'' +
+                    ", password='" + password + '\'' +
+                    ", birthday=" + birthday +
+                    ", gender='" + gender + '\'' +
+                    ", phone=" + phone +
+                    '}';
         }
-
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "mail='" + mail + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", birthday=" + this.getBirthday() +
-                ", gender='" + gender + '\'' +
-                ", phone=" + phone +
-                '}';
-    }
 }

@@ -8,15 +8,17 @@ import org.joda.time.LocalDate;
 /**
  * Created by marti on 13/12/2016.
  */
+
 public class Utils {
 
         public static Document createDocument(final User user){
             Document document = new Document("mail", user.getMail())
-                                            .append("password", user.getPassword())
                                             .append("username", user.getUsername())
+                                            .append("password", user.getPassword())
                                             .append("birthday", user.getBirthday())
                                             .append("gender", user.getGender())
                                             .append("phone", user.getPhone());
+
             return document;
         }
 

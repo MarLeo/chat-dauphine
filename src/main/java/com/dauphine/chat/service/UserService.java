@@ -15,7 +15,7 @@ public interface UserService {
 
        public List<Document> findAll();
 
-       public List<Document> findUser(final String username, final String password);
+       public List<Document> findUser(final User user);
 
        public Document update(final User user);
 

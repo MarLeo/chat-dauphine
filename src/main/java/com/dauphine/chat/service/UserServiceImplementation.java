@@ -31,8 +31,8 @@ public class UserServiceImplementation implements UserService {
         }
 
         @Override
-        public List<Document> findUser(final String username, final String password) {
-            return mongoCollection.find(new Document("username", username).append("password", password)).projection(Utils.excludeId()).into(new ArrayList<Document>());
+        public List<Document> findUser(final User user) {
+            return mongoCollection.find(new Document("username", user.getUsername()).append("password", user.getPassword())).projection(Utils.excludeId()).into(new ArrayList<Document>());
         }
 
         @Override
