@@ -25,7 +25,7 @@ C:\>npm install -g bower
 * [Créer un compte GitHub](https://github.com/join) (si c'est pas déjà fait)
 
 ```sh
-$ git clone https://github.com/francoisburdy/avalanche.git
+$ git clone https://github.com/MarLeo/chat-dauphine.git
 $ cd chat-dauphine
 $ bower install
 ```
