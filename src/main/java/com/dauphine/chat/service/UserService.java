@@ -1,7 +1,6 @@
 package com.dauphine.chat.service;
 
 import com.dauphine.chat.domain.User;
-import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
 
 import java.util.List;
@@ -11,30 +10,20 @@ import java.util.List;
  */
 public interface UserService {
 
-       public void create(final User user);
+       void create(final User user);
 
-       public List<Document> findAll();
+       List<User> findAll();
 
-       public List<Document> findUser(final User user);
+       User findByMail(final String mail);
 
-       public Document update(final User user);
+       User findUser(final User user);
 
-       public DeleteResult deleteUser(final String username);
+       User update(final User user);
 
+       void disableUser(final String mail);
 
+       void enableUser(final String mail);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+       void deleteUser(final String username);
 
 }

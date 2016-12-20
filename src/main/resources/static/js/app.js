@@ -8,14 +8,14 @@
 "use strict";
 
 /*
-WebSocket service for chatroom server
-*/
+ WebSocket service for chatroom server
+ */
 function WebSocketService(url) {
     var webSocket, server;
     var serverLocation = url;
 
     //Connect to a room
-    this.connect = function(room, callback) {
+    this.connect = function (room, callback) {
         if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
             return;
         }
@@ -30,52 +30,52 @@ function WebSocketService(url) {
     }
 
     //Disconnet from a room
-    this.disconnect = function() {
+    this.disconnect = function () {
         if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
             webSocket.close();
         }
     }
 
     //Get WebSocket State
-    this.status = function() {
+    this.status = function () {
         return webSocket.readyState;
     }
 
     //Set on message handler
-    this.setHandler = function(handler) {
+    this.setHandler = function (handler) {
         webSocket.onmessage = handler;
     }
 
-    //Send message to server
-    this.sendMessage = function(message) {
+    //Send message
+    this.sendMessage = function (message) {
         webSocket.send(message);
     }
 
 }
 
 /*
-Search field service
-*/
+ Search field service
+ */
 function SearchService() {
     var searchBar, search;
     searchBar = $(".search-bar");
     search = $("#search");
 
     //Show search field
-    this.show = function() {
+    this.show = function () {
         searchBar.show();
     }
 
     //Hide search field
-    this.hide = function() {
+    this.hide = function () {
         searchBar.hide();
     }
 
 }
 
 /*
-Navigation Bar service with search field
-*/
+ Navigation Bar service with search field
+ */
 function NavBarService() {
     var loading = $("#loading");
     this.closeBtn = $("#close");
@@ -83,49 +83,49 @@ function NavBarService() {
     var searchService = new SearchService();
 
     //Show loading animation
-    this.showLoad = function() {
+    this.showLoad = function () {
         loading.show();
     }
 
     //Hide loading animation
-    this.hideLoad = function() {
+    this.hideLoad = function () {
         loading.hide();
     }
 
     //Show close button
-    this.showClose = function() {
+    this.showClose = function () {
         (this.closeBtn).show();
     }
 
     //Hide close button
-    this.hideClose = function() {
+    this.hideClose = function () {
         (this.closeBtn).hide();
     }
 
     //Show search field
-    this.showSearch = function() {
+    this.showSearch = function () {
         searchService.show();
     }
 
     //Hide search field
-    this.hideSearch = function() {
+    this.hideSearch = function () {
         searchService.hide();
     }
 
 }
 
 /*
-Side navigation bar service
-*/
+ Side navigation bar service
+ */
 function SideNavService() {
     var sideNavBar, sideNavBtn;
     sideNavBar = $("#slide-out");
     sideNavBtn = $(".button-collapse");
 
     //Fix for fixed side navigation on mobile
-    var fixMobile = function() {
-        $('.side-nav li a').on('click', function(e) {
-            windowsize = $(window).width();
+    var fixMobile = function () {
+        $('.side-nav li a').on('click', function (e) {
+            var windowsize = $(window).width();
             if (windowsize < 992) {
                 sideNavBtn.sideNav('hide');
             }
@@ -133,7 +133,7 @@ function SideNavService() {
     }
 
     //Init side navigation
-    this.init = function() {
+    this.init = function () {
         sideNavBtn.sideNav({
             menuWidth: 240, // Default is 240
             edge: 'left', // Choose the horizontal origin
@@ -144,20 +144,20 @@ function SideNavService() {
     };
 
     //Show side navigation
-    this.show = function() {
+    this.show = function () {
         sideNavBar.show();
     }
 
     //Hide side navigation
-    this.hide = function() {
+    this.hide = function () {
         sideNavBar.hide();
     }
 
 }
 
 /*
-Home page service
-*/
+ Home page service
+ */
 function HomeService() {
     var home, mail, password, room, loginForm, loginValidator;
     home = $("#home");
@@ -169,22 +169,22 @@ function HomeService() {
     this.registerBtn = $("#registerBtn");
 
     //Show home page
-    this.show = function() {
+    this.show = function () {
         home.show();
     }
 
     //Hide home page
-    this.hide = function() {
+    this.hide = function () {
         home.hide();
     }
 
     //Init room select
-    var initSelect = function() {
+    var initSelect = function () {
         room.material_select();
     };
 
     //Select switch to previous room
-    this.previousRoom = function(e) {
+    this.previousRoom = function (e) {
         e.preventDefault();
         var current = $("#room > option:selected");
         if (!current.prev().is(":disabled")) {
@@ -198,7 +198,7 @@ function HomeService() {
     }
 
     //Select switch to next room
-    this.nextRoom = function(e) {
+    this.nextRoom = function (e) {
         e.preventDefault();
         var current = $("#room > option:selected");
         if (!current.is(':last-child')) {
@@ -212,7 +212,7 @@ function HomeService() {
     }
 
     //Validate login form
-    var validateLogin = function(form) {
+    var validateLogin = function (form) {
         loginValidator = form.validate({
             rules: {
                 mail: {
@@ -238,27 +238,27 @@ function HomeService() {
         });
     };
 
-    this.validForm = function() {
+    this.validForm = function () {
         return loginForm.valid();
     }
 
     //Get mail
-    this.getMail = function() {
+    this.getMail = function () {
         return mail.val();
     }
 
     //Get password
-    this.getPassword = function() {
+    this.getPassword = function () {
         return password.val();
     }
 
     //Get username TODO clean
-    this.getUsername = function() {
+    this.getUsername = function () {
         return (mail.val()).split("@")[0]; //TODO check get db username: if empty then do this line
     }
 
     //Get room
-    this.getRoom = function() {
+    this.getRoom = function () {
         return room.val();
     }
 
@@ -268,8 +268,8 @@ function HomeService() {
 }
 
 /*
-Registration page service
-*/
+ Registration page service
+ */
 function RegisterService() {
     var userdata, register, pwd, registerForm, registerValidator, passwordS;
     register = $("#register");
@@ -279,24 +279,24 @@ function RegisterService() {
     this.validBtn = $("#valid");
 
     //Show registration page
-    this.show = function() {
+    this.show = function () {
         register.show();
     }
 
     //Hide registration page
-    this.hide = function() {
+    this.hide = function () {
         register.hide();
     }
 
-    var showPasswordS = function() {
+    var showPasswordS = function () {
         passwordS.show();
     }
 
-    var hidePasswordS = function() {
+    var hidePasswordS = function () {
         passwordS.hide();
     }
 
-    var showPasswordStrength = function() {
+    var showPasswordStrength = function () {
         var password = getPassword();
         var meter = passwordS.find("div");
         var strength;
@@ -334,12 +334,12 @@ function RegisterService() {
         }
     }
 
-    this.refreshPasswordStrength = function() {
+    this.refreshPasswordStrength = function () {
         pwd.on("input", showPasswordStrength);
     }
 
     //Init birthday date picker
-    var initDatePicker = function() {
+    var initDatePicker = function () {
         var maxDate = new Date();
         maxDate.setFullYear(maxDate.getFullYear() - 10);
         $('.datepicker').pickadate({
@@ -350,7 +350,7 @@ function RegisterService() {
     };
 
     //Validate register form
-    var validateRegister = function(form) {
+    var validateRegister = function (form) {
         registerValidator = form.validate({
             rules: {
                 email: {
@@ -396,23 +396,23 @@ function RegisterService() {
         });
     };
 
-    var getMail = function() {
+    var getMail = function () {
         return $("#email").val();
     }
 
-    var getPassword = function() {
+    var getPassword = function () {
         return pwd.val();
     }
 
-    var getUsername = function() {
+    var getUsername = function () {
         return $("#username").val();
     }
 
-    var getBirthdate = function() {
+    var getBirthdate = function () {
         return new Date($("#birthdate").val());
     }
 
-    var getGender = function() {
+    var getGender = function () {
         var male = $("#male").prop('checked');
         var female = $("#female").prop('checked');
         var res;
@@ -428,13 +428,13 @@ function RegisterService() {
         return res;
     }
 
-    var getPhone = function() {
+    var getPhone = function () {
         return $("#telephone").val();
     }
 
-    var getUserData = function() {
+    var getUserData = function () {
         var data = {
-            email: getMail(),
+            mail: getMail(),
             password: getPassword(),
             username: getUsername(),
             birthdate: getBirthdate(),
@@ -445,34 +445,33 @@ function RegisterService() {
     }
 
     //Send registration data to server
-    var registerChat = function(response) {
-        //TODO send data & show loading
+    var registerChat = function (response, success, error) {
+        //TODO clean console
         userdata = getUserData();
+        userdata.captcha = response;
         $.ajax({
             type: "POST",
             url: "/register",
+            contentType: "application/json",
             dataType: 'JSON',
-            data: {
-                user: JSON.stringify(userdata),
-                captcha: response
+            data: JSON.stringify(userdata),
+            success: function () {
+                success();
+                console.log("success");
             },
-            success: function() {
-                alert("success");
-            },
-            error: function(data) {
-                alert("fail");
+            error: function (data) {
+                error();
+                console.log("fail :", data);
             }
         });
-        /*hideRegister();
-        showHome();*/
     }
 
-    var initConfirm = function() {
+    var initConfirm = function () {
         swal.disableConfirmButton();
-        $('.swal2-confirm').wrap(function() {
+        $('.swal2-confirm').wrap(function () {
             return '<div class="col s12 m6 tooltipped" data-position="top" data-tooltip="Please verify the captcha"/>';
         });
-        $('.swal2-cancel').wrap(function() {
+        $('.swal2-cancel').wrap(function () {
             return '<div class="col s12 m6"/>';
         });
         $('.tooltipped').tooltip({
@@ -480,12 +479,12 @@ function RegisterService() {
         });
     }
 
-    var allowConfirm = function() {
+    var allowConfirm = function () {
         swal.enableConfirmButton();
         $('.tooltipped').tooltip('remove');
     }
 
-    var renderCaptcha = function() {
+    var renderCaptcha = function () {
         initConfirm();
         var captchaKey = '6LeHxwwUAAAAALBdEOEocIsmGVDzzmVYH3w_vVTT';
         //TODO compact mode if mobile
@@ -496,21 +495,21 @@ function RegisterService() {
         });
     }
 
-    var captchaResponse = function() {
+    var captchaResponse = function () {
         var response = grecaptcha.getResponse();
-        return response != 0 && response;
+        return response.length != 0 && response;
     }
 
     //Open Terms and Conditions of Service modal with captcha verification
-    this.openCaptcha = function(callback) {
+    this.openCaptcha = function (callback) {
         if (registerForm.valid()) {
             swal({
                 title: 'Terms and Conditions',
                 html: '<p>By creating an account, you consent to the ' +
-                    '<a href="">Terms of Service</a> ' +
-                    'and the ' +
-                    '<a href="">Privacy Policy</a>.</p>' +
-                    '<div id="captcha" class="row"/>',
+                '<a href="">Terms of Service</a> ' +
+                'and the ' +
+                '<a href="">Privacy Policy</a>.</p>' +
+                '<div id="captcha" class="row"/>',
                 type: 'info',
                 background: '#546e7a',
                 showCancelButton: true,
@@ -522,38 +521,38 @@ function RegisterService() {
                 cancelButtonClass: 'btn',
                 buttonsStyling: false,
                 onOpen: renderCaptcha,
-            }).then(function() {
-                    var captcha = captchaResponse();
-                    if (captcha) {
-                        registerChat(captcha);
-                        //TODO color
-                        swal({
-                            title: 'Success',
-                            text: 'A confirmation mail has been send to your inbox.',
-                            type: 'success',
-                            background: '#546e7a',
-                        });
-                    } else {
-                        //TODO reset captcha ?
-                        swal({
-                            title: 'Error',
-                            text: 'Please fill the captcha verification',
-                            type: 'error',
-                            background: '#546e7a',
-                        });
-                    }
-
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        var captcha = captchaResponse();
+                        if (captcha) {
+                            registerChat(captcha, resolve, reject);
+                        } else {
+                            //TODO reset captcha ?
+                            reject('Please vefiry the captcha');
+                        }
+                    })
+                },
+            }).then(function () {
+                    //TODO color fix
+                    swal({
+                        title: 'Success',
+                        text: 'A confirmation mail has been send to your inbox.',
+                        type: 'success',
+                        background: '#546e7a',
+                    }).then(function () {
+                        callback()
+                    });
                 }
                 /*, function(dismiss) {
-                                // dismiss can be 'cancel', 'overlay', 'close', and 'timer'
-                                if (dismiss === 'cancel') {
-                                    swal(
-                                        'Cancelled',
-                                        'Your imaginary file is safe :)',
-                                        'error'
-                                    )
-                                }
-                            }*/
+                 // dismiss can be 'cancel', 'overlay', 'close', and 'timer'
+                 if (dismiss === 'cancel') {
+                 swal(
+                 'Cancelled',
+                 'Your imaginary file is safe :)',
+                 'error'
+                 )
+                 }
+                 }*/
             );
         }
     }
@@ -569,23 +568,23 @@ function ValidatorService() {
     $.validator.setDefaults({
         errorClass: 'invalid',
         validClass: "valid",
-        errorPlacement: function(error, element) {
+        errorPlacement: function (error, element) {
             $(element)
                 .closest("form")
                 .find("label[for='" + element.attr("id") + "']")
                 .attr('data-error', error.text());
         },
-        submitHandler: function(form) {
+        submitHandler: function (form) {
             //TODO clean
             console.log('form ok');
         }
     });
 
-    $.validator.methods.email = function(value, element) {
+    $.validator.methods.email = function (value, element) {
         return this.optional(element) || /[A-Za-z.\d-]+@[a-z.\d-]+\.[a-z]+/.test(value);
     }
 
-    $.validator.addMethod("passwordCheck", function(value, element) {
+    $.validator.addMethod("passwordCheck", function (value, element) {
         return this.optional(element) || (/^[A-Za-z0-9\d=!\-@._*]*$/.test(value) // consists of only these
             &&
             /[a-z]/.test(value) // has a lowercase letter
@@ -593,7 +592,7 @@ function ValidatorService() {
             /\d/.test(value)); // has a digit
     }, "Your password must contain at least one number.");
 
-    $.validator.addMethod("dateGreaterThan", function(value, element, params) {
+    $.validator.addMethod("dateGreaterThan", function (value, element, params) {
         if (!/Invalid|NaN/.test(new Date(value))) {
             return new Date(value) > new Date($(params).val());
         }
@@ -601,7 +600,7 @@ function ValidatorService() {
             (Number(value) > Number($(params).val()));
     }, 'Must be greater than {0}.');
 
-    $.validator.addMethod("phone", function(value, element) {
+    $.validator.addMethod("phone", function (value, element) {
         return this.optional(element) || /^[+?\d\s-]+$/.test(value);
     }, "Enter a valid phone number.");
 
@@ -610,33 +609,33 @@ function ValidatorService() {
 function SessionService() {
     var session = window.sessionStorage;
 
-    this.isSupported = function() {
+    this.isSupported = function () {
         return session;
     };
 
-    this.setItem = function(key, value) {
+    this.setItem = function (key, value) {
         return session.setItem(key, value);
     };
 
-    this.getItem = function(key) {
+    this.getItem = function (key) {
         return session.getItem(key);
     };
 
-    this.removeItem = function(key) {
+    this.removeItem = function (key) {
         return session.removeItem(key);
     };
 
-    this.clearAll = function() {
+    this.clearAll = function () {
         return session.clear();
     };
 
-    var init = function() {
+    var init = function () {
         //Storage extension for storing object in JSON strings
-        Storage.prototype.setObject = function(key, value) {
+        Storage.prototype.setObject = function (key, value) {
             this.setItem(key, JSON.stringify(value));
         }
 
-        Storage.prototype.getObject = function(key) {
+        Storage.prototype.getObject = function (key) {
             var value = this.getItem(key);
             return value && JSON.parse(value);
         }
@@ -644,11 +643,11 @@ function SessionService() {
 
     init();
 
-    var setObject = function(key, object) {
+    var setObject = function (key, object) {
         return session.setObject(key, object);
     };
 
-    var getObject = function(key) {
+    var getObject = function (key) {
         return session.getObject(key);
     };
 
@@ -656,8 +655,8 @@ function SessionService() {
 
 
 /*
-Chat page service
-*/
+ Chat page service
+ */
 function ChatService(url) {
     //TODO clean var
     var session, mail, username, room, chat, conv, msg, bsend, msend, preventNewScroll, connected;
@@ -678,7 +677,7 @@ function ChatService(url) {
     var webSocketService = new WebSocketService(url);
 
     //Show chat page
-    var show = function() {
+    var show = function () {
         chat.show();
         sideNavService.show();
         navBarService.showSearch();
@@ -686,7 +685,7 @@ function ChatService(url) {
     }
 
     //Hide chat page
-    var hide = function() {
+    var hide = function () {
         chat.hide();
         sideNavService.hide();
         navBarService.hideSearch();
@@ -694,14 +693,14 @@ function ChatService(url) {
     }
 
     //Open registration page
-    var openRegistration = function() {
+    var openRegistration = function () {
         homeService.hide();
         registerService.show();
         navBarService.showClose();
     }
 
     //Store user session
-    var storeSession = function(user) {
+    var storeSession = function (user) {
         if (sessionService.isSupported()) {
             sessionService.setObject("user", user);
         } else {
@@ -710,7 +709,7 @@ function ChatService(url) {
     }
 
     //Clear user session
-    var clearSession = function() {
+    var clearSession = function () {
         if (sessionService.isSupported()) {
             sessionService.clearAll();
         } else {
@@ -719,12 +718,12 @@ function ChatService(url) {
     }
 
     //Open user session
-    var handleSession = function() {
+    var handleSession = function () {
         if (sessionService.isSupported()) {
             session = sessionService.getObject("user");
             if (session) {
                 //TODO go to profil ?
-                webSocketService.connect("IF", function() {
+                webSocketService.connect("IF", function () {
                     webSocketService.setHandler(handleMessage);
                     homeService.hide();
                     $('#login-room').text(username + "@" + room.toUpperCase());
@@ -739,9 +738,9 @@ function ChatService(url) {
     }
 
     //Open chatroom page
-    var openChat = function() {
+    var openChat = function () {
         //TODO clean timeout
-        setTimeout(function() {
+        setTimeout(function () {
             navBarService.hideLoad();
             if (webSocketService.status() !== WebSocket.OPEN) {
                 Materialize.toast("No connexion", 5000, "rounded");
@@ -757,26 +756,27 @@ function ChatService(url) {
     }
 
     //Focus first empty visible enable input
-    var autofocus = function() {
+    var autofocus = function () {
         //TODO update valid (& empty?)
         $('input:empty:visible:enabled:first').focus();
         // $('input:text[value=""],input:password[value=""]').first().focus()
     }
 
-    var signin = function(user) {
+    var signin = function (user) {
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/login",
+            contentType: "application/json",
             dataType: 'JSON',
-            data: user,
-            success: function() {
+            data: JSON.stringify(user),
+            success: function () {
                 alert("success");
                 //TODO store session & clean username
                 username = homeService.getUsername();
                 navBarService.showLoad();
                 webSocketService.connect(room, openChat);
             },
-            error: function(data) {
+            error: function (data) {
                 console.log(data);
                 alert("fail");
                 autofocus();
@@ -786,7 +786,7 @@ function ChatService(url) {
     }
 
     //Try enter chatroom
-    var enterChat = function() {
+    var enterChat = function () {
         if (!connected) {
             mail = homeService.getMail();
             room = homeService.getRoom();
@@ -804,8 +804,8 @@ function ChatService(url) {
     }
 
     //Append message to chatroom
-    var appendMessage = function(newMsg) {
-        var sender, datetime, parag, li;
+    var appendMessage = function (newMsg) {
+        var sender, datetime, parag;
         var li = $('<li class="collection-item">');
         //TODO get username & user link
         var username = (newMsg.sender).split("@")[0];
@@ -824,12 +824,12 @@ function ChatService(url) {
     }
 
     //Handle message from server
-    var handleMessage = function(e) {
+    var handleMessage = function (e) {
         e.preventDefault();
         var msg = JSON.parse(e.data); // native API
         if (msg.sender == mail) {
             //TODO clean timeout
-            setTimeout(function() {
+            setTimeout(function () {
                 msend.hide();
                 appendMessage(msg);
             }, 1000);
@@ -839,7 +839,7 @@ function ChatService(url) {
     }
 
     //Send message in chatroom
-    var sendMessage = function() {
+    var sendMessage = function () {
         if ($.trim(msg.val())) {
             msend.show();
             //TODO check no connexion & hide loader + show message
@@ -855,7 +855,7 @@ function ChatService(url) {
     }
 
     //Exit
-    var exit = function() {
+    var exit = function () {
         if (connected) {
             webSocketService.disconnect();
             sessionService.clearSession();
@@ -869,22 +869,22 @@ function ChatService(url) {
         autofocus();
     }
 
-    var toggleFullscreen = function() {
+    var toggleFullscreen = function () {
         document.fullScreenElement && null !== document.fullScreenElement || !document.mozFullScreen && !document.webkitIsFullScreen ? document.documentElement.requestFullScreen ? document.documentElement.requestFullScreen() : document.documentElement.mozRequestFullScreen ? document.documentElement.mozRequestFullScreen() : document.documentElement.webkitRequestFullScreen && document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT) : document.cancelFullScreen ? document.cancelFullScreen() : document.mozCancelFullScreen ? document.mozCancelFullScreen() : document.webkitCancelFullScreen && document.webkitCancelFullScreen()
     }
 
     //Auto scroll chat
     //TODO check usefull
-    var scrollChat = function() {
+    var scrollChat = function () {
         if (!preventNewScroll) { // if mouse is not over printer
             conv.stop().animate({
                 scrollTop: conv[0].scrollHeight
-                    /* - convH */
+                /* - convH */
             }, 1000); // SET SCROLLER TO BOTTOM
         }
 
         // PREVENT SCROLL TO BOTTOM WHILE READING OLD MESSAGES/
-        conv.hover(function(e) {
+        conv.hover(function (e) {
             e.preventDefault();
             preventNewScroll = e.type == 'mouseenter' ? true : false;
             if (!preventNewScroll) {
@@ -894,7 +894,7 @@ function ChatService(url) {
     }
 
     //Init event listeners
-    this.init = function() {
+    this.init = function () {
 
         var doc = $(document);
 
@@ -902,14 +902,14 @@ function ChatService(url) {
 
         (homeService.registerBtn).click(openRegistration);
 
-        doc.on('keypress', function(e) {
+        doc.on('keypress', function (e) {
             if (e.which == 13) {
                 enterChat();
                 return false;
             }
         });
 
-        doc.keydown(function(e) {
+        doc.keydown(function (e) {
             if (!connected) {
                 if (e.which === 40 || e.which === 39) {
                     homeService.nextRoom(e);
@@ -924,7 +924,7 @@ function ChatService(url) {
             }
         });
 
-        msg.on('keypress', function(e) {
+        msg.on('keypress', function (e) {
             // on Post click or 'enter' but allow new lines using shift+enter
             if (e.which === 13 && !e.shiftKey) {
                 sendMessage(e);
@@ -936,7 +936,9 @@ function ChatService(url) {
 
         registerService.refreshPasswordStrength();
 
-        (registerService.validBtn).click(registerService.openCaptcha);
+        (registerService.validBtn).click(function () {
+            registerService.openCaptcha(exit)
+        });
 
         (navBarService.closeBtn).click(exit);
 
@@ -944,17 +946,17 @@ function ChatService(url) {
 
 }
 
-$(window).on('load', function() {
-    setTimeout(function() {
+$(window).on('load', function () {
+    setTimeout(function () {
         $("body").addClass("loaded")
     }, 1000)
 });
 
-$(document).ready(function() {
+$(document).ready(function () {
     //TODO show loading
     //TODO autofocus();
 
-    var chatApp = (function() {
+    var chatApp = (function () {
         var particlesConfig = './particlesjs-config.json';
         var url = "localhost:8080/app"; // TODO static server
 
@@ -962,7 +964,7 @@ $(document).ready(function() {
         chatService.init();
 
         //Init particlesjs
-        var initParticles = function() {
+        var initParticles = function () {
             /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
             particlesJS.load('particles-js', particlesConfig);
         }();
@@ -974,6 +976,6 @@ $(document).ready(function() {
 });
 
 /*
-(function ($) { $(function () {
-}); // end of document ready })(jQuery); // end of jQuery name space
-*/
+ (function ($) { $(function () {
+ }); // end of document ready })(jQuery); // end of jQuery name space
+ */
