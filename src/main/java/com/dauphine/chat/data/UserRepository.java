@@ -23,4 +23,7 @@ public interface UserRepository extends MongoRepository<User, String>, PagingAnd
     @Query(value="{ 'username' : ?0 }")
     List<User> findByUsername(@Param("username") String username);
 
+    @Query("{ 'mail' : ?0, 'password' : ?1 }")
+    User findByMailAndPassword(final String mail, final String password);
+
 }

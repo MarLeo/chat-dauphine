@@ -23,11 +23,8 @@ public class ChatUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
 
-    private final PasswordEncoder passwordEncoder;
-
-    public ChatUserDetailsService(final UserService userService, final PasswordEncoder passwordEncoder) {
+    public ChatUserDetailsService(final UserService userService) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

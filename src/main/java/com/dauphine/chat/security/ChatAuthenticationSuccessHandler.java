@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.dauphine.chat.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -28,7 +28,7 @@ public class ChatAuthenticationSuccessHandler extends SavedRequestAwareAuthentic
 
     private final ObjectMapper mapper;
 
-    public ChatAuthenticationSuccessHandler(MappingJackson2HttpMessageConverter messageConverter) {
+    public ChatAuthenticationSuccessHandler(@Qualifier("mappingJackson2HttpMessageConverter") MappingJackson2HttpMessageConverter messageConverter) {
         this.mapper = messageConverter.getObjectMapper();
     }
 
