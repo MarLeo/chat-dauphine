@@ -2,6 +2,8 @@ package com.dauphine.chat.service;
 
 import com.dauphine.chat.data.UserRepository;
 import com.dauphine.chat.domain.User;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
 
+    private static final Logger LOGGER = LogManager.getLogger(UserServiceImplementation.class);
+
     @Autowired
     public UserServiceImplementation(final UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -22,7 +26,8 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public void create(final User user) {
-        userRepository.insert(user);
+        //TODO encode password
+        userRepository.save(user);
     }
 
     @Override
@@ -32,6 +37,10 @@ public class UserServiceImplementation implements UserService {
 
     public User findByMail(final String mail) {
         return userRepository.findByMail(mail);
+    }
+
+    public User findByMailPassword(final String mail, final String password) {
+        return userRepository.findByMailAndPassword(mail, password);
     }
 
     public List<User> findByUsername(final String username) {
@@ -45,9 +54,9 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public User update(User user) {
+        //TODO encode password
         return userRepository.save(user);
     }
-
 
     public void disableUser(final String mail) {
         User user = userRepository.findByMail(mail);

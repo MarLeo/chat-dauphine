@@ -22,12 +22,14 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping(value = UserController.URI_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = UserController.URI_ROOT, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
     private final UserService userService;
 
-    protected static final String URI_VALUE = "/user";
+    protected static final String URI_ROOT = "/";
+    protected static final String URI_USER = "users";
+    protected static final String URI_REGISTER = "register";
 
 
     private static final Logger LOGGER = LogManager.getLogger(UserController.class);
@@ -37,7 +39,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = URI_VALUE, method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_USER, method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> findUser(@RequestBody final String mail) {
         User user = userService.findByMail(mail);
         if (user == null) {
@@ -47,7 +49,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.FOUND);
     }
 
-    @RequestMapping(value = URI_VALUE, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_REGISTER, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createUser(@RequestBody final User user) {
         if (userService.findUser(user) == null) {
             userService.create(user);
@@ -66,7 +68,7 @@ public class UserController {
 //        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
 //    }
 
-    @RequestMapping(value = URI_VALUE, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_USER, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateUser(@RequestBody final User user) {
         userService.update(user);
         LOGGER.log(Level.INFO, String.format("User updated %s", user.toString()));
@@ -74,7 +76,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = URI_VALUE, method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = URI_USER, method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteUser(@RequestBody final User user) {
         userService.disableUser(user.getMail());
         LOGGER.log(Level.INFO, String.format("User deleted %s", user.toString()));

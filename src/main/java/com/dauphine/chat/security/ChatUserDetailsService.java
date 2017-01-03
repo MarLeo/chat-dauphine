@@ -27,7 +27,7 @@ public class ChatUserDetailsService implements UserDetailsService {
         this.userService = userService;
     }
 
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public ChatUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userService.findByMail(username);
         if (user == null) {
             throw new UsernameNotFoundException(username);
@@ -42,8 +42,23 @@ public class ChatUserDetailsService implements UserDetailsService {
         return new ChatUserDetails(user, grantedAuthorities);
     }
 
-    public UserDetails loadUserByMail(String mail) throws UsernameNotFoundException {
+    public ChatUserDetails loadUserByMail(String mail) throws UsernameNotFoundException {
         User user = userService.findByMail(mail);
+        if (user == null) {
+            throw new UsernameNotFoundException(mail);
+        }
+
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        /*List<String> permissions = userService.getPermissions(user.getMail());
+        for (String permission : permissions) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(permission));
+        }*/
+
+        return new ChatUserDetails(user, grantedAuthorities);
+    }
+
+    public ChatUserDetails loadUserByMailPassword(String mail, String password) throws UsernameNotFoundException {
+        User user = userService.findByMailPassword(mail, password);
         if (user == null) {
             throw new UsernameNotFoundException(mail);
         }

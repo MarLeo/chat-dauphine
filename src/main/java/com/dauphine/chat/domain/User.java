@@ -61,6 +61,8 @@ public class User {
         this.password = password;
     }
 
+    public void hidePassword(){ setPassword(""); }
+
     public String getBirthday() {
         return birthday;
     }

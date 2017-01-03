@@ -957,7 +957,7 @@ $(document).ready(function () {
     //TODO autofocus();
 
     var chatApp = (function () {
-        var particlesConfig = './particlesjs-config.json';
+        var particlesConfig = './lib/particlesjs-config.json';
         var url = "localhost:8080/app"; // TODO static server
 
         var chatService = new ChatService(url);

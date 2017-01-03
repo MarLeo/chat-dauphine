@@ -1,24 +1,23 @@
 package com.dauphine.chat.config;
 
 import com.dauphine.chat.security.*;
-import com.dauphine.chat.service.UserService;
-import com.dauphine.chat.service.UserServiceImplementation;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 /*import org.springframework.security.authentication.AuthenticationProvider;
@@ -43,23 +42,27 @@ import java.util.List;*/
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String LOGIN = "/login";
+    private static final String URL_LOGIN = "/login";
 
-    private static final String MAIL = "mail";
-    private static final String PASSWORD = "password";
+//    private static final String MAIL = "mail";
+//    private static final String PASSWORD = "password";
 
-    private static final String SECURE_ADMIN_PASSWORD = "rockandroll";
+    //private static final String SECURE_ADMIN_PASSWORD = "rockandroll";
 
     @Autowired
     private ChatUserDetailsService userDetailsService;
     @Autowired
     private ChatAuthenticationEntryPoint authEntryPoint;
     @Autowired
+    private ChatAuthenticationProvider authProvider;
+    @Autowired
     private ChatAuthenticationSuccessHandler authSuccessHandler;
     @Autowired
     private ChatAuthenticationFailureHandler authFailureHandler;
     @Autowired
     private ChatLogoutSuccessHandler logoutSuccessHandler;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Bean
     @Override
@@ -75,22 +78,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
+//        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
         return encoder;
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
+    protected JsonMailPasswordAuthenticationFilter authFilter() throws Exception {
+        JsonMailPasswordAuthenticationFilter filter = new JsonMailPasswordAuthenticationFilter(URL_LOGIN, authSuccessHandler, authFailureHandler, objectMapper);
+        filter.setAuthenticationManager(authenticationManager());
+        return filter;
     }
+
+//    @Bean
+//    public AuthenticationProvider authenticationProvider() {
+//        ChatAuthenticationProvider authenticationProvider = new ChatAuthenticationProvider(userDetailsService, passwordEncoder());
+////        authenticationProvider.setUserDetailsService(userDetailsService);
+////        authenticationProvider.setPasswordEncoder(passwordEncoder());
+//        return authenticationProvider;
+//    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
+        auth.authenticationProvider(authProvider);
+        /*auth.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());*/
     }
 
     @Override
@@ -101,30 +113,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/js/**", "/lib/**", "/img/**", "/css/**", "/index.html", LOGIN, "/").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .authenticationProvider(authenticationProvider())
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
-                .formLogin()
-                .loginProcessingUrl(LOGIN)
-                .usernameParameter(MAIL)
-                .passwordParameter(PASSWORD)
-                .successHandler(authSuccessHandler)
-                .failureHandler(authFailureHandler)
-                .permitAll()
-                .and()
-                //.antMatchers("/websocket").hasRole("ADMIN")
-                .logout()
-                .permitAll()
-                .logoutRequestMatcher(new AntPathRequestMatcher(LOGIN, "DELETE"))
-                .logoutSuccessHandler(logoutSuccessHandler)
-                .and()
+//                .loginProcessingUrl(URL_LOGIN)
+//                .usernameParameter(MAIL)
+//                .passwordParameter(PASSWORD)
+//                .successHandler(authSuccessHandler)
+//                .failureHandler(authFailureHandler)
+//                .and()
+//                .antMatchers("/websocket").hasRole("ADMIN")
+//                .logout()
+//                .permitAll()
+//                .logoutRequestMatcher(new AntPathRequestMatcher(URL_LOGIN, "DELETE"))
+//                .logoutSuccessHandler(logoutSuccessHandler)
+//                .and()
                 .sessionManagement()
-                .maximumSessions(1);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                .and()
+                .authorizeRequests()
+                .antMatchers("/js/**", "/lib/**", "/img/**", "/css/**", "/index.html", URL_LOGIN, "/register", "/").permitAll()
+
+                .and()
+                .addFilterBefore(authFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeRequests().anyRequest().authenticated();
 

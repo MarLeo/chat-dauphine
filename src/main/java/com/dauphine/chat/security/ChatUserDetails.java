@@ -38,6 +38,10 @@ public class ChatUserDetails implements UserDetails {
         return user.getUsername();
     }
 
+    public String getMail() {
+        return user.getMail();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
