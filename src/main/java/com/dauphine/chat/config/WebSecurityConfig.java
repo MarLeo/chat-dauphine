@@ -44,8 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String URL_LOGIN = "/login";
 
-//    private static final String MAIL = "mail";
-//    private static final String PASSWORD = "password";
+    //private static final String URL_LOGOUT = "/logout";
 
     //private static final String SECURE_ADMIN_PASSWORD = "rockandroll";
 
@@ -90,19 +89,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return filter;
     }
 
-//    @Bean
-//    public AuthenticationProvider authenticationProvider() {
-//        ChatAuthenticationProvider authenticationProvider = new ChatAuthenticationProvider(userDetailsService, passwordEncoder());
-////        authenticationProvider.setUserDetailsService(userDetailsService);
-////        authenticationProvider.setPasswordEncoder(passwordEncoder());
-//        return authenticationProvider;
-//    }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authProvider);
-        /*auth.userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());*/
     }
 
     @Override
@@ -116,16 +105,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
-//                .loginProcessingUrl(URL_LOGIN)
-//                .usernameParameter(MAIL)
-//                .passwordParameter(PASSWORD)
-//                .successHandler(authSuccessHandler)
-//                .failureHandler(authFailureHandler)
-//                .and()
 //                .antMatchers("/websocket").hasRole("ADMIN")
 //                .logout()
 //                .permitAll()
-//                .logoutRequestMatcher(new AntPathRequestMatcher(URL_LOGIN, "DELETE"))
+//                .logoutRequestMatcher(new AntPathRequestMatcher(URL_LOGOUT, "DELETE"))
 //                .logoutSuccessHandler(logoutSuccessHandler)
 //                .and()
                 .sessionManagement()
@@ -141,37 +124,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().anyRequest().authenticated();
 
     }
-
-    /*
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(userService)
-                .passwordEncoder(new BCryptPasswordEncoder());
-    }
-
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-
-        auth.authenticationProvider(new AuthenticationProvider() {
-
-            @Override
-            public boolean supports(Class<?> authentication) {
-                return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
-            }
-
-            @Override
-            public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-                UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
-
-                List<GrantedAuthority> authorities = SECURE_ADMIN_PASSWORD.equals(token.getCredentials()) ?
-                        AuthorityUtils.createAuthorityList("ROLE_ADMIN") : null;
-
-                return new UsernamePasswordAuthenticationToken(token.getName(), token.getCredentials(), authorities);
-            }
-        });
-    }
-    */
 
 }
