@@ -108,8 +108,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(authFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.authorizeRequests().anyRequest().authenticated();
+        http.authorizeRequests().antMatchers("/chat/", "/chat/**").permitAll().anyRequest().authenticated();
 
     }
+
+
+
+
+
+
+
+
 
 }

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+//import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
@@ -23,13 +23,13 @@ import java.util.Collection;
  *
  * Created by marti on 10/12/2016.
  */
-@Controller
+//@Controller
 public class ChatController {
-
+ /*
 
         @Autowired private ParticipantRepository participantRepository;
 
-        @Autowired private SimpMessagingTemplate simpMessagingTemplate;
+        //@Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
         private static final Logger LOGGER = LogManager.getLogger(ChatController.class);
 
@@ -52,8 +52,8 @@ public class ChatController {
         public void filterPrivateMessage(@Payload final ChatMessage message, @DestinationVariable("username") final String username, Principal principal){
             message.setUsername(principal.getName());
             LOGGER.log(Level.INFO,String.format("%s is sending a private message to %s (%s)", message.getUsername(), username, message.getMessage()));
-            simpMessagingTemplate.convertAndSend("/user/" + username + "/exchange/amq.direct/chat.message", message);
+            //simpMessagingTemplate.convertAndSend("/user/" + username + "/exchange/amq.direct/chat.message", message);
         }
-
+*/
 
 }

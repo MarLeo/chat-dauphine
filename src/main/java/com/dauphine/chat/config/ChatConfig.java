@@ -10,8 +10,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 /**
  * Created by marti on 13/12/2016.
  */
-@Configuration
+//@Configuration
 public class ChatConfig {
+    /*
     public static class Destinations{
         private Destinations(){
         }
@@ -37,4 +38,5 @@ public class ChatConfig {
     public ParticipantRepository participantRepository(){
         return new ParticipantRepository();
     }
+    */
 }

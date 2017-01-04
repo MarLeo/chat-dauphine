@@ -8,7 +8,8 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
- * Created by marti on 10/12/2016.
+ * @author marti
+ * @date 10/12/2016.
  */
 public class LoginEvent {
 

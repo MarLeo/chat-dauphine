@@ -958,7 +958,7 @@ $(document).ready(function () {
 
     var chatApp = (function () {
         var particlesConfig = './lib/particlesjs-config.json';
-        var url = "localhost:8080/app"; // TODO static server
+        var url = "localhost:8080/chat/"; // TODO static server
 
         var chatService = new ChatService(url);
         chatService.init();
