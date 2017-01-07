@@ -1,13 +1,16 @@
 {
   "name": "Dauphine Chat WebSocket",
   "version": "0.1.2",
-  "authors": ["Martin Tchokonthe <martintchokonthe@yahoo.fr>"],
+  "authors": [
+    "Martin Tchokonthe <martintchokonthe@yahoo.fr>"
+  ],
   "dependencies": {
     "jquery": "^3.1.1",
     "jquery-validation": "^1.15.1",
     "materialize": "^0.97.8",
     "particles.js": "^2.0.0",
     "zxcvbn": "^4.4.1",
-    "sweetalert2": "^6.2.0"
+    "sweetalert2": "^6.2.0",
+    "animate.css": "^3.5.2"
   }
 }

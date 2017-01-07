@@ -4,6 +4,7 @@
 //TODO room db table
 //TODO profil & photo
 //TODO notif toast & swal
+//TODO clean console log
 
 "use strict";
 
@@ -13,6 +14,7 @@
 function WebSocketService(url) {
     var webSocket, server;
     var serverLocation = url;
+    var maxAttempt = 50;
 
     //Connect to a room
     this.connect = function (room, callback) {
@@ -24,15 +26,19 @@ function WebSocketService(url) {
         } else {
             server = "ws://" + serverLocation + room;
         }
-        console.log(server);
         webSocket = new WebSocket(server);
-        callback();
+        waitConnection(function () {
+            callback(room);
+        });
     }
 
     //Disconnet from a room
     this.disconnect = function () {
-        if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
-            webSocket.close();
+        if (webSocket !== undefined) {
+            if (webSocket.readyState !== WebSocket.CLOSED) {
+                webSocket.close();
+            }
+            return true;
         }
     }
 
@@ -47,8 +53,47 @@ function WebSocketService(url) {
     }
 
     //Send message
-    this.sendMessage = function (message) {
-        webSocket.send(message);
+    this.send = function (message) {
+        waitConnection(function () {
+            webSocket.send(JSON.stringify(message));
+        });
+    }
+
+    var showNetworkError = function () {
+        swal({
+            title: 'Network Error',
+            text: 'Please check your connection and reload page',
+            type: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Reload',
+            cancelButtonText: 'Stay',
+        }).then(function () {
+            window.location.reload();
+        }, function (dismiss) {
+            //Do nothing
+        });
+    }
+
+    var waitConnection = function (callback) {
+        if (maxAttempt >= 0) {
+            setTimeout(
+                function () {
+                    if (webSocket.readyState === WebSocket.OPEN) {
+                        if (callback != null) {
+                            callback();
+                        }
+                        return;
+                    } else {
+                        console.log("Waiting connection..")
+                        waitConnection(callback);
+                    }
+                }, 100); // wait 100 milisecond for the connection...
+        } else {
+            maxAttempt = 50;
+            showNetworkError();
+        }
     }
 
 }
@@ -252,11 +297,6 @@ function HomeService() {
         return password.val();
     }
 
-    //Get username TODO clean
-    this.getUsername = function () {
-        return (mail.val()).split("@")[0]; //TODO check get db username: if empty then do this line
-    }
-
     //Get room
     this.getRoom = function () {
         return room.val();
@@ -457,11 +497,9 @@ function RegisterService() {
             data: JSON.stringify(userdata),
             success: function () {
                 success();
-                console.log("success");
             },
             error: function (data) {
                 error();
-                console.log("fail :", data);
             }
         });
     }
@@ -500,9 +538,13 @@ function RegisterService() {
         return response.length != 0 && response;
     }
 
+    var validForm = function () {
+        return registerForm.valid();
+    }
+
     //Open Terms and Conditions of Service modal with captcha verification
     this.openCaptcha = function (callback) {
-        if (registerForm.valid()) {
+        if (validForm()) {
             swal({
                 title: 'Terms and Conditions',
                 html: '<p>By creating an account, you consent to the ' +
@@ -511,7 +553,6 @@ function RegisterService() {
                 '<a href="">Privacy Policy</a>.</p>' +
                 '<div id="captcha" class="row"/>',
                 type: 'info',
-                background: '#546e7a',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
@@ -538,7 +579,6 @@ function RegisterService() {
                         title: 'Success',
                         text: 'A confirmation mail has been send to your inbox.',
                         type: 'success',
-                        background: '#546e7a',
                     }).then(function () {
                         callback()
                     });
@@ -574,10 +614,7 @@ function ValidatorService() {
                 .find("label[for='" + element.attr("id") + "']")
                 .attr('data-error', error.text());
         },
-        submitHandler: function (form) {
-            //TODO clean
-            console.log('form ok');
-        }
+        submitHandler: function (form) {}
     });
 
     $.validator.methods.email = function (value, element) {
@@ -609,7 +646,7 @@ function ValidatorService() {
 function SessionService() {
     var session = window.sessionStorage;
 
-    this.isSupported = function () {
+    var isSupported = function () {
         return session;
     };
 
@@ -625,7 +662,7 @@ function SessionService() {
         return session.removeItem(key);
     };
 
-    this.clearAll = function () {
+    var clearAll = function () {
         return session.clear();
     };
 
@@ -647,9 +684,40 @@ function SessionService() {
         return session.setObject(key, object);
     };
 
-    var getObject = function (key) {
+    this.getObject = function (key) {
         return session.getObject(key);
     };
+
+    this.storeObject = function (name, object) {
+        if (isSupported()) {
+            setObject(name, object);
+        } else {
+            //TODO show session handler error
+            showSessionError();
+        }
+    }
+
+    this.handleSession = function (callback) {
+        if (isSupported()) {
+            callback();
+        } else {
+            //TODO show session handler error
+            showSessionError();
+        }
+    }
+
+    this.clearSession = function () {
+        if (isSupported()) {
+            clearAll();
+        } else {
+            //TODO show session handler error
+            showSessionError();
+        }
+    }
+
+    var showSessionError = function () {
+        Materialize.toast("Warning : your browser doesn't handle HTML5 !", 5000, "rounded");
+    }
 
 }
 
@@ -659,7 +727,7 @@ function SessionService() {
  */
 function ChatService(url) {
     //TODO clean var
-    var session, mail, username, room, chat, conv, msg, bsend, msend, preventNewScroll, connected;
+    var userSession, mail, username, room, chat, conv, msg, bsend, msend, preventNewScroll, connected;
     preventNewScroll = false;
     connected = false;
     chat = $("#chat");
@@ -700,64 +768,56 @@ function ChatService(url) {
     }
 
     //Store user session
-    var storeSession = function (user) {
-        if (sessionService.isSupported()) {
-            sessionService.setObject("user", user);
-        } else {
-            //TODO
-        }
+    var storeUserSession = function (user) {
+        sessionService.storeObject("user", user);
     }
 
-    //Clear user session
-    var clearSession = function () {
-        if (sessionService.isSupported()) {
-            sessionService.clearAll();
-        } else {
-            //TODO
-        }
+    //Store room session
+    var storeRoomSession = function (room) {
+        sessionService.storeObject("room", room);
     }
 
     //Open user session
-    var handleSession = function () {
-        if (sessionService.isSupported()) {
-            session = sessionService.getObject("user");
-            if (session) {
+    var openSession = function () {
+        sessionService.handleSession(function () {
+            userSession = sessionService.getObject("user");
+            room = sessionService.getObject("room");
+            mail = userSession.mail;
+            //TODO check not empty object
+            if (userSession && room) {
+                //TODO signin token
                 //TODO go to profil ?
-                webSocketService.connect("IF", function () {
-                    webSocketService.setHandler(handleMessage);
-                    homeService.hide();
-                    $('#login-room').text(username + "@" + room.toUpperCase());
-                    sideNavService.init();
-                    show();
-                    connected = true;
+                //TODO room session
+                webSocketService.connect(room, function () {
+                    loadChatRoom();
                 });
             }
-        } else {
-            //TODO
-        }
+        });
+    }
+
+    var loadChatRoom = function () {
+        webSocketService.setHandler(handleMessage);
+        $('#login-room').text(room.toUpperCase());
+        $('#name').text(username);
+        $('#usermail').html(mail + "<i class='material-icons right'>arrow_drop_down</i>");
+        homeService.hide();
+        navBarService.hideLoad();
+        sideNavService.init();
+        show();
+        connected = true;
     }
 
     //Open chatroom page
-    var openChat = function () {
-        //TODO clean timeout
-        setTimeout(function () {
-            navBarService.hideLoad();
-            if (webSocketService.status() !== WebSocket.OPEN) {
-                Materialize.toast("No connexion", 5000, "rounded");
-            } else {
-                webSocketService.setHandler(handleMessage);
-                homeService.hide();
-                $('#login-room').text(username + "@" + room.toUpperCase());
-                sideNavService.init();
-                show();
-                connected = true;
-            }
-        }, 1000);
+    var openChatRoom = function (room) {
+        storeRoomSession(room);
+        webSocketService.setHandler(handleMessage);
+        loadChatRoom();
     }
 
     //Focus first empty visible enable input
     var autofocus = function () {
         //TODO update valid (& empty?)
+        //if (registerService)
         $('input:empty:visible:enabled:first').focus();
         // $('input:text[value=""],input:password[value=""]').first().focus()
     }
@@ -769,18 +829,29 @@ function ChatService(url) {
             contentType: "application/json",
             dataType: 'JSON',
             data: JSON.stringify(user),
-            success: function () {
-                alert("success");
-                //TODO store session & clean username
-                username = homeService.getUsername();
-                navBarService.showLoad();
-                webSocketService.connect(room, openChat);
+            success: function (data) {
+                //TODO check application/json
+                storeUserSession(data);
+                mail = data.mail;
+                if ($.trim(data.username)) {
+                    username = data.username;
+                } else {
+                    username = (data.mail).split("@")[0];
+                }
+                webSocketService.connect(room, openChatRoom);
             },
-            error: function (data) {
-                console.log(data);
-                alert("fail");
-                autofocus();
-                //TODO notif
+            error: function (err) {
+                console.log(err);
+                navBarService.hideLoad();
+                //TODO display err + failed to authenticate
+                swal({
+                    title: 'Authentication failed',
+                    text: err.responseText,
+                    type: "error",
+                    animation: false,
+                    customClass: 'animated shake',
+                    timer: 3000,
+                }).catch(swal.noop);
             }
         });
     }
@@ -788,14 +859,14 @@ function ChatService(url) {
     //Try enter chatroom
     var enterChat = function () {
         if (!connected) {
-            mail = homeService.getMail();
             room = homeService.getRoom();
             //TODO if room null -> go to general chat or profil ?
             if ($.trim(room) && homeService.validForm()) {
                 var session = {
-                    mail: mail,
+                    mail: homeService.getMail(),
                     password: homeService.getPassword()
                 }
+                navBarService.showLoad();
                 signin(session);
             } else {
                 autofocus();
@@ -809,14 +880,14 @@ function ChatService(url) {
         var li = $('<li class="collection-item">');
         //TODO get username & user link
         var username = (newMsg.sender).split("@")[0];
-        if (newMsg.sender == mail) {
-            datetime = $('<small>' + newMsg.datetime + '</small>');
+        if (newMsg.sender != mail) {
+            datetime = $('<small>' + newMsg.date + '</small>');
             sender = $('<strong class="right">' + username + '</strong>');
             parag = $('<p style="text-align: right">' + newMsg.message + '</p>');
             li.append(datetime).append(sender).append(parag);
         } else {
             sender = $('<strong>' + username + '</strong>');
-            datetime = $('<small class="right">' + newMsg.datetime + '</small>');
+            datetime = $('<small class="right">' + newMsg.date + '</small>');
             parag = $('<p>' + newMsg.message + '</p>');
             li.append(sender).append(datetime).append(parag);
         }
@@ -826,31 +897,46 @@ function ChatService(url) {
     //Handle message from server
     var handleMessage = function (e) {
         e.preventDefault();
-        var msg = JSON.parse(e.data); // native API
-        if (msg.sender == mail) {
-            //TODO clean timeout
-            setTimeout(function () {
-                msend.hide();
-                appendMessage(msg);
-            }, 1000);
+        var msg = JSON.parse(e.data);
+        console.log(msg);
+        if (msg.mail == mail) {
+            msend.hide();
+            appendMessage(msg);
         } else {
             appendMessage(msg);
         }
     }
 
-    //Send message in chatroom
+    //Send message in room
     var sendMessage = function () {
         if ($.trim(msg.val())) {
-            msend.show();
-            //TODO check no connexion & hide loader + show message
-            var newMsg = {
-                message: msg.val().replace(/(?:\r\n|\r|\n)/g, '<br/>'),
-                sender: mail,
-            };
+            if (webSocketService.status() === WebSocket.OPEN) {
+                msend.show();
+                var newMsg = {
+                    message: msg.val().replace(/(?:\r\n|\r|\n)/g, '<br/>'),
+                    sender: username,
+                    mail: mail
+                };
+                webSocketService.send(newMsg);
+                msg.val("").focus();
+                scrollChat();
+            } else {
+                //TODO check no connexion & hide loader + show message
+                msend.hide();
+            }
+        }
+    }
 
-            webSocketService.sendMessage(JSON.stringify(newMsg));
-            msg.val("").focus();
-            scrollChat();
+    var clearChatRoom = function () {
+        //TODO
+    }
+
+    var switchRom = function (nextRoom) {
+        while (!webSocketService.disconnect()) {
+            webSocketService.connect(nextRoom, function () {
+                webSocketService.setHandler(handleMessage);
+                clearChatRoom();
+            });
         }
     }
 
@@ -927,7 +1013,7 @@ function ChatService(url) {
         msg.on('keypress', function (e) {
             // on Post click or 'enter' but allow new lines using shift+enter
             if (e.which === 13 && !e.shiftKey) {
-                sendMessage(e);
+                sendMessage();
                 return false;
             }
         });
@@ -937,13 +1023,11 @@ function ChatService(url) {
         registerService.refreshPasswordStrength();
 
         (registerService.validBtn).click(function () {
-            registerService.openCaptcha(exit)
+            registerService.openCaptcha(exit);
         });
 
         (navBarService.closeBtn).click(exit);
-
     }
-
 }
 
 $(window).on('load', function () {
@@ -953,7 +1037,6 @@ $(window).on('load', function () {
 });
 
 $(document).ready(function () {
-    //TODO show loading
     //TODO autofocus();
 
     var chatApp = (function () {
@@ -969,10 +1052,10 @@ $(document).ready(function () {
             particlesJS.load('particles-js', particlesConfig);
         }();
 
+        swal.setDefaults({background: '#546e7a'});
+
         //return {}
-
     })();
-
 });
 
 /*

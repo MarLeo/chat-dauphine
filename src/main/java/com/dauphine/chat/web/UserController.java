@@ -2,19 +2,14 @@ package com.dauphine.chat.web;
 
 import com.dauphine.chat.domain.User;
 import com.dauphine.chat.service.UserService;
-//import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.DeleteResult;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Created by marti on 13/12/2016.
@@ -59,14 +54,6 @@ public class UserController {
         LOGGER.log(Level.INFO, String.format("User %s already exist", user.toString()));
         return new ResponseEntity<>(HttpStatus.IM_USED);
     }
-
-//    @RequestMapping(method = RequestMethod.GET)
-//    public ResponseEntity<List<Document>> findAllUsers() {
-//        LOGGER.log(Level.INFO, String.format("find all users"));
-//        if (userService.findAll().isEmpty())
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
-//    }
 
     @RequestMapping(value = URI_USER, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateUser(@RequestBody final User user) {

@@ -49,3 +49,15 @@ bower_components
 *.jar
 *.war
 *.ear
+
+#Others
+/src/main/resources/static/index.html.old
+/src/main/resources/static/lib/sweetalert2/
+/src/main/resources/static/lib/particles.js/
+/src/main/resources/static/lib/materialize/
+/.gitignore
+/src/main/resources/static/lib/jquery-validation/
+/src/main/resources/static/lib/zxcvbn/
+/src/main/resources/static/lib/jquery/
+/src/main/resources/static/lib/animate.css/
+/src/main/resources/static/lib/es6-promise/
