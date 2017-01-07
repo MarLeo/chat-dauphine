@@ -1,7 +1,6 @@
 package com.dauphine.chat.service;
 
 import com.dauphine.chat.domain.User;
-import org.bson.Document;
 
 import java.util.List;
 
@@ -27,5 +26,4 @@ public interface UserService {
        void enableUser(final String mail);
 
        void deleteUser(final String username);
-
 }

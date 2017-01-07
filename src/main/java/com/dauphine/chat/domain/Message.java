@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * Created by marti on 06/01/2017.
  */
 @Document(collection = "messages")
-public class Room {
+public class Message {
 
     private String room;
     private String user;
@@ -18,7 +18,7 @@ public class Room {
     //private DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d MMMM, yyyy, HH:mm:ss");
 
     @PersistenceConstructor
-    public Room(String room, String user, String message) {
+    public Message(String room, String user, String message) {
         this.room = room;
         this.user = user;
         this.message = message;
@@ -59,7 +59,7 @@ public class Room {
 
     @Override
     public String toString() {
-        return "Room{" +
+        return "Message{" +
                 "room='" + room + '\'' +
                 ", user='" + user + '\'' +
                 ", message='" + message + '\'' +

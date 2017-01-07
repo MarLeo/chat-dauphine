@@ -1,7 +1,7 @@
 package com.dauphine.chat.chatendpoint;
 
-import com.dauphine.chat.data.RoomRepository;
-import com.dauphine.chat.domain.Room;
+import com.dauphine.chat.data.MessageRepository;
+import com.dauphine.chat.domain.Message;
 import com.google.gson.Gson;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
@@ -27,13 +27,13 @@ import java.util.Map;
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(ChatWebSocketHandler.class);
-    private final RoomRepository roomRepository;
+    private final MessageRepository messageRepository;
     private List<WebSocketSession> sessions = new ArrayList<>();
 
 
     @Autowired
-    public ChatWebSocketHandler(final RoomRepository roomRepository) {
-        this.roomRepository = roomRepository;
+    public ChatWebSocketHandler(final MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
     }
 
     synchronized void addSession(final WebSocketSession webSocketSession) {
@@ -57,11 +57,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         try {
             for (WebSocketSession session : sessions) {
                 if (session.isOpen() && room.equals(session.getAttributes().get("room"))) {
+                    //TODO Map message & generate date without gson
                     Map<String, String> value = getMap(textMessage);
                     session.getAttributes().put("sender", value.get("sender"));
                     session.sendMessage(new TextMessage(new Gson().toJson(value)));
-                    Room r = new Room(room, value.get("sender"), value.get("message"));
-                    this.roomRepository.save(r);
+                    Message r = new Message(room, value.get("sender"), value.get("message"));
+                    this.messageRepository.save(r);
                     LOGGER.log(Level.INFO, String.format("new message %s from %s in room %s at %s", value.get("message"), value.get("sender"), room, value.get("date")));
                 }
             }

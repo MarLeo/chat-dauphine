@@ -360,6 +360,6 @@ overflow: hidden;
           bottom: 0;
           padding-left: 10em;
           height: 45em;*/
-    overflow-y: scroll;
+    overflow-y: hidden;/*scroll*/
     overflow-x: hidden;
 }
