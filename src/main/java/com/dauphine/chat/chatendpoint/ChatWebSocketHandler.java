@@ -7,15 +7,12 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import org.springframework.web.socket.messaging.SessionConnectEvent;
 
-import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -24,15 +21,14 @@ import java.util.*;
  */
 
 @Component
-public class ChatWebSocketHandler extends TextWebSocketHandler implements ApplicationListener<SessionConnectEvent> {
+public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(ChatWebSocketHandler.class);
     private final MessageRepository messageRepository;
     HashSet<String> users = new HashSet<>();
     String username = null;
     private List<WebSocketSession> sessions = new ArrayList<>();
-    @Autowired
-    private HttpSession session;
+
 
     @Autowired
     public ChatWebSocketHandler(final MessageRepository messageRepository) {
@@ -44,19 +40,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler implements Applic
     }
 
 
-    @Override
-    public void onApplicationEvent(SessionConnectEvent event) {
-
-    }
-
 
     @Override
     public void afterConnectionEstablished(final WebSocketSession webSocketSession) throws Exception {
-        //Principal principal = webSocketSession.getPrincipal();
         String[] uriParts = getStrings(webSocketSession);
         webSocketSession.getAttributes().put("room", uriParts[2]);
         addSession(webSocketSession);
-        //username = principal.getName();
         LOGGER.log(Level.INFO, String.format("Session opened by %s with session id %s with URI %s in room %s", username, webSocketSession.getId(), webSocketSession.getUri().toString(), uriParts[2]));
 
     }
