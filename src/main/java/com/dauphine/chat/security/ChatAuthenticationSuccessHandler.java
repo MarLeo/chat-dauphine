@@ -1,13 +1,5 @@
 package com.dauphine.chat.security;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import com.dauphine.chat.domain.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -19,6 +11,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 
 /**
@@ -42,7 +41,9 @@ public class ChatAuthenticationSuccessHandler implements AuthenticationSuccessHa
         ChatUserDetails userDetails = (ChatUserDetails) authentication.getPrincipal();
         User user = userDetails.getUser();
 
-        LOGGER.info(user.getMail() + " got is connected ");
+        LOGGER.info(user.getMail() + " is connected ");
+        HttpSession session = request.getSession();
+        session.setAttribute("username", user.getUsername());
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

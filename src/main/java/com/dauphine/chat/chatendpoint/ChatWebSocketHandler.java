@@ -13,11 +13,9 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by marti on 03/01/2017.
@@ -28,8 +26,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(ChatWebSocketHandler.class);
     private final MessageRepository messageRepository;
+    HashSet<String> users = new HashSet<>();
+    String username = null;
     private List<WebSocketSession> sessions = new ArrayList<>();
-
+    @Autowired
+    private HttpSession session;
 
     @Autowired
     public ChatWebSocketHandler(final MessageRepository messageRepository) {
@@ -42,13 +43,14 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
 
     @Override
-    public void afterConnectionEstablished(final WebSocketSession webSocketSession /*,@PathParam("room") final String room*/) throws Exception {
+    public void afterConnectionEstablished(final WebSocketSession webSocketSession) throws Exception {
         String[] uriParts = getStrings(webSocketSession);
-        LOGGER.log(Level.INFO, String.format("Session opened with session id %s with URI %s in room %s", webSocketSession.getId(), webSocketSession.getUri().toString(), uriParts[2]));
         webSocketSession.getAttributes().put("room", uriParts[2]);
         addSession(webSocketSession);
-    }
+        //username = (String) session.getAttribute("username");
+        LOGGER.log(Level.INFO, String.format("Session opened by %s with session id %s with URI %s in room %s", username, webSocketSession.getId(), webSocketSession.getUri().toString(), uriParts[2]));
 
+    }
 
 
     @Override
@@ -61,9 +63,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                     Map<String, String> value = getMap(textMessage);
                     session.getAttributes().put("sender", value.get("sender"));
                     session.sendMessage(new TextMessage(new Gson().toJson(value)));
-                    Message r = new Message(room, value.get("sender"), value.get("message"));
-                    this.messageRepository.save(r);
+                    Message message = new Message(room, value.get("sender"), value.get("message"));
+                    this.messageRepository.save(message);
+                    users.add(value.get("sender"));
                     LOGGER.log(Level.INFO, String.format("new message %s from %s in room %s at %s", value.get("message"), value.get("sender"), room, value.get("date")));
+                    LOGGER.log(Level.INFO, String.format("Users connected in room %s are %s", room, users.toString()));
+
                 }
             }
         } catch (Exception e) {
@@ -108,6 +113,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     }
 
 
+    private Set<String> getUserNames() {
+        HashSet<String> set = new HashSet<>();
+        Iterator<WebSocketSession> iterator = sessions.iterator();
+        while (iterator.hasNext()) set.add(iterator.next().getAttributes().get("sender").toString());
+        return set;
+    }
 
 
 
