@@ -24,7 +24,7 @@ import java.util.List;
 @RequestMapping(value = RoomController.URI_ROOT, produces = MediaType.APPLICATION_JSON_VALUE)
 public class RoomController {
 
-    protected static final String URI_ROOT = "/";
+    protected static final String URI_ROOT = "/rooms";
 
     private static final Logger LOGGER = LogManager.getLogger(RoomController.class);
     @Autowired

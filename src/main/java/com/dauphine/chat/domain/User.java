@@ -1,19 +1,15 @@
 package com.dauphine.chat.domain;
 
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.stereotype.Component;
 
 /**
  * Created by marti on 13/12/2016.
  */
 
 @Document(collection = "users")
-@Component
-@Scope("session")
 public class User {
 
     @Id

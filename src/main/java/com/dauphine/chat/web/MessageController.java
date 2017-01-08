@@ -6,8 +6,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,7 +24,7 @@ import java.util.List;
 @RequestMapping(value = MessageController.URI_ROOT, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MessageController {
 
-    protected static final String URI_ROOT = "/chat/{room}";
+    protected static final String URI_ROOT = "/chats/{room}";
 
     private static final Logger LOGGER = LogManager.getLogger(MessageController.class);
 
@@ -36,9 +34,9 @@ public class MessageController {
 
     @RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Message>> findRooms(@PathVariable("room") final String room) {
-        Page<Message> pages = messageRepository.findByRoom(room, sortByDateAsc(), new PageRequest(0, 10));
-        LOGGER.log(Level.INFO, String.format("messages in room %s are %s", room, pages.getContent().toString()));
-        return new ResponseEntity<>(pages.getContent(), HttpStatus.FOUND);
+        //Page<Message> pages = messageRepository.findByRoom(room, sortByDateAsc(), new PageRequest(0, 10));
+        LOGGER.log(Level.INFO, String.format("messages in room %s are %s", room, messageRepository.findByRoom(room, sortByDateAsc())/*pages.getContent().toString()*/));
+        return new ResponseEntity<>(/*pages.getContent()*/messageRepository.findByRoom(room, sortByDateAsc()), HttpStatus.FOUND);
     }
 
 
