@@ -2,9 +2,12 @@ package com.dauphine.chat.web;
 
 import com.dauphine.chat.data.MessageRepository;
 import com.dauphine.chat.domain.Message;
+import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,7 +36,9 @@ public class MessageController {
 
     @RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Message>> findRooms(@PathVariable("room") final String room) {
-        return new ResponseEntity<>(messageRepository.findByRoom(room, sortByDateAsc()), HttpStatus.FOUND);
+        Page<Message> pages = messageRepository.findByRoom(room, sortByDateAsc(), new PageRequest(0, 10));
+        LOGGER.log(Level.INFO, String.format("messages in room %s are %s", room, pages.getContent().toString()));
+        return new ResponseEntity<>(pages.getContent(), HttpStatus.FOUND);
     }
 
 
