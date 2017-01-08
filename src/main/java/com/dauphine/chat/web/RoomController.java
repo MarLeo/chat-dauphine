@@ -24,7 +24,7 @@ import java.util.List;
 @RequestMapping(value = RoomController.URI_ROOT, produces = MediaType.APPLICATION_JSON_VALUE)
 public class RoomController {
 
-    protected static final String URI_ROOT = "/";
+    protected static final String URI_ROOT = "/rooms";
 
     private static final Logger LOGGER = LogManager.getLogger(RoomController.class);
     @Autowired
@@ -37,18 +37,18 @@ public class RoomController {
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Room> createRoom(@RequestBody final Room room) {
-        if (roomRepository.findByRoom(room.getRoom()) == null) {
+        if (roomRepository.findByName(room.getName()) == null) {
             roomRepository.save(room);
             LOGGER.log(Level.INFO, String.format("created new room %s", room));
-            return new ResponseEntity<Room>(room, HttpStatus.CREATED);
+            return new ResponseEntity<>(room, HttpStatus.CREATED);
         }
-        LOGGER.log(Level.INFO, String.format("room %s already exist", room.getRoom()));
+        LOGGER.log(Level.INFO, String.format("room %s already exist", room.getName()));
         return new ResponseEntity<>(HttpStatus.IM_USED);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteRoom(@RequestBody final Room room) {
         LOGGER.log(Level.INFO, String.format("deleting room %s", room.toString()));
         roomRepository.delete(room);

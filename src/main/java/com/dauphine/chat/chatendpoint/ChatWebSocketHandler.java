@@ -86,7 +86,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
-        //LOGGER.log(Level.INFO, String.format("Session %s closed by %s from room %s at %d because of %s", webSocketSession.getId(), webSocketSession.getAttributes().get("sender"),getRoom(webSocketSession), new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime()), closeStatus.getReason()));
+        //LOGGER.log(Level.INFO, String.format("Session %s closed by %s from room %s at %d because of %s", webSocketSession.getId(), webSocketSession.getAttributes().get("sender"),getName(webSocketSession), new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime()), closeStatus.getReason()));
         LOGGER.log(Level.INFO, String.format("Session %s closed because of %s", webSocketSession.getId(), closeStatus.getReason()));
         sessions.remove(webSocketSession);
     }

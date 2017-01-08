@@ -33,12 +33,12 @@ function WebSocketService(url) {
     }
 
     //Disconnet from a room
-    this.disconnect = function () {
+    this.disconnect = function (callback) {
         if (webSocket !== undefined) {
-            if (webSocket.readyState !== WebSocket.CLOSED) {
+            if (webSocket.readyState === WebSocket.OPEN) {
                 webSocket.close();
             }
-            return true;
+            waitDisconnection(callback);
         }
     }
 
@@ -86,10 +86,32 @@ function WebSocketService(url) {
                         }
                         return;
                     } else {
-                        console.log("Waiting connection..")
+                        console.log("Waiting connection..");
+                        maxAttempt--;
                         waitConnection(callback);
                     }
                 }, 100); // wait 100 milisecond for the connection...
+        } else {
+            maxAttempt = 50;
+            showNetworkError();
+        }
+    }
+
+    var waitDisconnection = function (callback) {
+        if (maxAttempt >= 0) {
+            setTimeout(
+                function () {
+                    if (webSocket.readyState === WebSocket.CLOSED) {
+                        if (callback != null) {
+                            callback();
+                        }
+                        return;
+                    } else {
+                        console.log("Waiting disconnection..");
+                        maxAttempt--;
+                        waitConnection(callback);
+                    }
+                }, 10); // wait 10 milisecond for the disconnection...
         } else {
             maxAttempt = 50;
             showNetworkError();
@@ -166,6 +188,7 @@ function SideNavService() {
     var sideNavBar, sideNavBtn;
     sideNavBar = $("#slide-out");
     sideNavBtn = $(".button-collapse");
+    this.rooms = $('#rooms');
 
     //Fix for fixed side navigation on mobile
     var fixMobile = function () {
@@ -201,6 +224,42 @@ function SideNavService() {
 }
 
 /*
+ Chatrooms service
+ */
+function RoomService() {
+
+    this.getRooms = function (callback) {
+        $.ajax({
+            type: "GET",
+            url: "/rooms",
+            success: function (data) {
+                callback(data);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    this.createRoom = function (name) {
+        $.ajax({
+            type: "POST",
+            url: "/rooms",
+            contentType: "application/json",
+            dataType: 'JSON',
+            data: JSON.stringify({name: name}),
+            success: function (succ) {
+                console.log(succ);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+}
+
+/*
  Home page service
  */
 function HomeService() {
@@ -212,6 +271,8 @@ function HomeService() {
     room = $("select");
     this.enterBtn = $("#enter");
     this.registerBtn = $("#registerBtn");
+
+    var roomService = new RoomService();
 
     //Show home page
     this.show = function () {
@@ -225,7 +286,12 @@ function HomeService() {
 
     //Init room select
     var initSelect = function () {
-        room.material_select();
+        roomService.getRooms(function (rooms) {
+            rooms.forEach(function (item) {
+                room.append('<option value="' + item.name + '">' + item.name + '</option>');
+            });
+            room.material_select();
+        });
     };
 
     //Select switch to previous room
@@ -302,6 +368,9 @@ function HomeService() {
         return room.val();
     }
 
+    // roomService.createRoom("IF");
+    // roomService.createRoom("ID");
+    // roomService.createRoom("SITN");
     initSelect();
     validateLogin(loginForm);
 
@@ -614,7 +683,8 @@ function ValidatorService() {
                 .find("label[for='" + element.attr("id") + "']")
                 .attr('data-error', error.text());
         },
-        submitHandler: function (form) {}
+        submitHandler: function (form) {
+        }
     });
 
     $.validator.methods.email = function (value, element) {
@@ -721,13 +791,11 @@ function SessionService() {
 
 }
 
-
 /*
  Chat page service
  */
 function ChatService(url) {
-    //TODO clean var
-    var userSession, mail, username, room, chat, conv, msg, bsend, msend, preventNewScroll, connected;
+    var userSession, mail, username, room, chat, conv, msg, bsend, msend, roomName, preventNewScroll, connected;
     preventNewScroll = false;
     connected = false;
     chat = $("#chat");
@@ -735,6 +803,7 @@ function ChatService(url) {
     msg = $("#msg");
     bsend = $("#bsend");
     msend = $("#msend");
+    roomName = $('#room-name');
 
     ValidatorService();
     var navBarService = new NavBarService();
@@ -797,7 +866,7 @@ function ChatService(url) {
 
     var loadChatRoom = function () {
         webSocketService.setHandler(handleMessage);
-        $('#login-room').text(room.toUpperCase());
+        roomName.text(room.toUpperCase());
         $('#name').text(username);
         $('#usermail').html(mail + "<i class='material-icons right'>arrow_drop_down</i>");
         homeService.hide();
@@ -860,7 +929,6 @@ function ChatService(url) {
     var enterChat = function () {
         if (!connected) {
             room = homeService.getRoom();
-            //TODO if room null -> go to general chat or profil ?
             if ($.trim(room) && homeService.validForm()) {
                 var session = {
                     mail: homeService.getMail(),
@@ -878,9 +946,10 @@ function ChatService(url) {
     var appendMessage = function (newMsg) {
         var sender, datetime, parag;
         var li = $('<li class="collection-item">');
-        //TODO get username & user link
-        var username = (newMsg.sender).split("@")[0];
-        if (newMsg.sender != mail) {
+        //TODO user link ?
+        var username = newMsg.sender;
+        //TODO color ?
+        if (newMsg.mail === mail) {
             datetime = $('<small>' + newMsg.date + '</small>');
             sender = $('<strong class="right">' + username + '</strong>');
             parag = $('<p style="text-align: right">' + newMsg.message + '</p>');
@@ -898,7 +967,6 @@ function ChatService(url) {
     var handleMessage = function (e) {
         e.preventDefault();
         var msg = JSON.parse(e.data);
-        console.log(msg);
         if (msg.mail == mail) {
             msend.hide();
             appendMessage(msg);
@@ -928,25 +996,27 @@ function ChatService(url) {
     }
 
     var clearChatRoom = function () {
-        //TODO
+        conv.empty();
     }
 
-    var switchRom = function (nextRoom) {
-        while (!webSocketService.disconnect()) {
+    var switchRoom = function (nextRoom) {
+        webSocketService.disconnect(function () {
             webSocketService.connect(nextRoom, function () {
                 webSocketService.setHandler(handleMessage);
                 clearChatRoom();
+                roomName.text(nextRoom);
             });
-        }
+        });
     }
 
     //Exit
     var exit = function () {
         if (connected) {
-            webSocketService.disconnect();
-            sessionService.clearSession();
-            hide();
-            connected = false;
+            webSocketService.disconnect(function () {
+                sessionService.clearSession();
+                hide();
+                connected = false;
+            });
         } else {
             navBarService.hideClose();
             registerService.hide();
@@ -1024,6 +1094,10 @@ function ChatService(url) {
 
         (registerService.validBtn).click(function () {
             registerService.openCaptcha(exit);
+        });
+
+        (sideNavService.rooms).click(function (e) {
+            switchRoom($(e.target).text());
         });
 
         (navBarService.closeBtn).click(exit);

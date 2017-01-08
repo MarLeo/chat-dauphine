@@ -22,9 +22,9 @@ public class UserController {
 
     private final UserService userService;
 
-    protected static final String URI_ROOT = "/";
-    protected static final String URI_USER = "users";
-    protected static final String URI_REGISTER = "register";
+    static final String URI_ROOT = "/";
+    private static final String URI_USER = "users";
+    private static final String URI_REGISTER = "register";
 
 
     private static final Logger LOGGER = LogManager.getLogger(UserController.class);

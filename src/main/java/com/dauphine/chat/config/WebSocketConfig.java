@@ -17,7 +17,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    //TODO move room repo to handler
+    //TODO move name repo to handler
     @Autowired
     private final MessageRepository messageRepository;
     @Autowired protected ChatWebSocketHandler chatWebSocketHandler;
@@ -28,6 +28,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new ChatWebSocketHandler(messageRepository), "/chat/{room}");
+        registry.addHandler(new ChatWebSocketHandler(messageRepository), "/chat/{name}");
     }
 }

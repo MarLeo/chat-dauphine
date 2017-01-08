@@ -11,6 +11,6 @@ import org.springframework.data.repository.query.Param;
  */
 public interface RoomRepository extends MongoRepository<Room, String>, PagingAndSortingRepository<Room, String> {
 
-    @Query(value = "{ 'room' : ?0 }")
-    Room findByRoom(@Param("room") final String room);
+    @Query(value = "{ 'name' : ?0 }")
+    Room findByName(@Param("name") final String name);
 }

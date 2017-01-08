@@ -103,7 +103,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/js/**", "/lib/**", "/img/**", "/css/**", "/index.html", URL_LOGIN, "/register", "/").permitAll()
+                .antMatchers("/js/**", "/lib/**", "/img/**", "/css/**", "/index.html", "/rooms", URL_LOGIN, "/register", "/").permitAll()
 
                 .and()
                 .addFilterBefore(authFilter(), UsernamePasswordAuthenticationFilter.class);

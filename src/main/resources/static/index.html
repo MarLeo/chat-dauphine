@@ -101,14 +101,12 @@
             </li>
         </ul>
     </li>
-    </div>
-    </li>
     <li>
         <div class="divider"></div>
     </li>
     <li><a class="subheader center">Rooms</a></li>
     <li class="no-padding">
-        <div class="collection">
+        <div id='rooms' class="collection">
             <a class="collection-item waves-effect">IF</a>
             <a class="collection-item waves-effect">ID</a>
             <a class="collection-item waves-effect">SITN</a>
@@ -136,13 +134,13 @@
                         <div class="row col s12">
                             <div class="input-field">
                                 <i class="material-icons prefix">markunread_mailbox</i>
-                                <select id="room" name="room">
-                                    <option value="" disabled selected>Choose your room</option>
-                                    <option value="if">IF</option>
+                                <select id="name" name="name">
+                                    <option value="" disabled selected>Choose a room</option>
+                                    <!--option value="if">IF</option>
                                     <option value="id">ID</option>
-                                    <option value="sitn">SITN</option>
+                                    <option value="sitn">SITN</option-->
                                 </select>
-                                <label for="room">Room</label>
+                                <label for="name">Room</label>
                             </div>
                         </div>
                         <div class="row col s12">
@@ -191,7 +189,7 @@
                             for="birthdate">Birthdate</label>
                     </div>
                     <div class="row">
-                        <div id="gender" name="gender" class="input-field col s12">
+                        <div id="gender" class="input-field col s12">
                             <i class="prefix">
                                 <svg style="width: 40px; height: 40px"
                                      viewBox="0 0 24 24">
@@ -220,7 +218,7 @@
             </div>
 
             <div id="chat" class="section container col" style="display: none;">
-                <h2 id="login-room" class="title"></h2>
+                <h2 id="room-name" class="title"></h2>
                 <ul id="conv" class="chat collection">
                     <!--li class="collection-item">
                         <strong>François Hollande</strong>

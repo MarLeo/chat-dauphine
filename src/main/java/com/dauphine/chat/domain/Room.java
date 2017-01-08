@@ -1,5 +1,6 @@
 package com.dauphine.chat.domain;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,18 +11,21 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "rooms")
 public class Room {
 
-    private String room;
+    @Id
+    private String name;
+
+    public Room(){}
 
     @PersistenceConstructor
-    public Room(final String room) {
-        this.room = room;
+    public Room(final String name) {
+        this.name = name;
     }
 
-    public String getRoom() {
-        return room;
+    public String getName() {
+        return name;
     }
 
-    public void setRoom(String room) {
-        this.room = room;
+    public void setName(String name) {
+        this.name = name;
     }
 }
