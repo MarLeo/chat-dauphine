@@ -6,14 +6,14 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import java.util.List;
 @RequestMapping(value = MessageController.URI_ROOT, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MessageController {
 
-    protected static final String URI_ROOT = "/chats/{room}";
+    protected static final String URI_ROOT = "/messages/{room}";
 
     private static final Logger LOGGER = LogManager.getLogger(MessageController.class);
 
@@ -32,11 +32,19 @@ public class MessageController {
     private MessageRepository messageRepository;
 
 
-    @RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Message>> findRooms(@PathVariable("room") final String room) {
-        //Page<Message> pages = messageRepository.findByRoom(room, sortByDateAsc(), new PageRequest(0, 10));
-        LOGGER.log(Level.INFO, String.format("messages in room %s are %s", room, messageRepository.findByRoom(room, sortByDateAsc())/*pages.getContent().toString()*/));
-        return new ResponseEntity<>(/*pages.getContent()*/messageRepository.findByRoom(room, sortByDateAsc()), HttpStatus.FOUND);
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<Message>> findMessages(@PathVariable("room") final String room) {
+        List<Message> messages = messageRepository.findByRoom(room, sortByDateAsc());
+        LOGGER.log(Level.INFO, String.format("get % room all messages", room));
+        return new ResponseEntity<>(messages, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{page}", method = RequestMethod.GET)
+    public ResponseEntity<Page<Message>> findMessagesByPage(@PathVariable("room") final String room, @PathVariable("page") final String page) {
+        Integer pageNum = Integer.parseInt(page);
+        Page<Message> messages = messageRepository.findByRoom(room, pageBy(pageNum, 10));
+        LOGGER.log(Level.INFO, String.format("get %s room messages page number %s", room, page));
+        return new ResponseEntity<>(messages, HttpStatus.PARTIAL_CONTENT);
     }
 
 
@@ -44,4 +52,7 @@ public class MessageController {
         return new Sort(Sort.Direction.ASC, "date");
     }
 
+    private Pageable pageBy(Integer nPage, Integer nMessage) {
+        return new PageRequest(nPage, nMessage, Sort.Direction.ASC, "date");
+    }
 }

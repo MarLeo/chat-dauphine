@@ -305,7 +305,7 @@ function HomeService() {
             current.prop("selected", false);
             $("#room option:not([disabled])").last().prop("selected", true);
         }
-        initSelect();
+        room.material_select();
     }
 
     //Select switch to next room
@@ -319,7 +319,7 @@ function HomeService() {
             current.prop("selected", false);
             $("#room option:not([disabled])").first().prop("selected", true);
         }
-        initSelect();
+        room.material_select();
     }
 
     //Validate login form
@@ -795,7 +795,7 @@ function SessionService() {
  Chat page service
  */
 function ChatService(url) {
-    var userSession, mail, username, room, chat, conv, msg, bsend, msend, roomName, preventNewScroll, connected;
+    var userSession, mail, username, room, chat, conv, msg, bsend, msend, roomName, history, historyPage, preventNewScroll, connected;
     preventNewScroll = false;
     connected = false;
     chat = $("#chat");
@@ -804,6 +804,8 @@ function ChatService(url) {
     bsend = $("#bsend");
     msend = $("#msend");
     roomName = $('#room-name');
+    history = $('#history')
+    historyPage = -1;
 
     ValidatorService();
     var navBarService = new NavBarService();
@@ -942,25 +944,34 @@ function ChatService(url) {
         }
     }
 
-    //Append message to chatroom
-    var appendMessage = function (newMsg) {
+    var loadMessage = function (message) {
         var sender, datetime, parag;
         var li = $('<li class="collection-item">');
+        var username = message.sender;
         //TODO user link ?
-        var username = newMsg.sender;
         //TODO color ?
-        if (newMsg.mail === mail) {
-            datetime = $('<small>' + newMsg.date + '</small>');
+        if (message.mail === mail) {
+            datetime = $('<small>' + message.date + '</small>');
             sender = $('<strong class="right">' + username + '</strong>');
-            parag = $('<p style="text-align: right">' + newMsg.message + '</p>');
+            parag = $('<p style="text-align: right">' + message.message + '</p>');
             li.append(datetime).append(sender).append(parag);
         } else {
             sender = $('<strong>' + username + '</strong>');
-            datetime = $('<small class="right">' + newMsg.date + '</small>');
-            parag = $('<p>' + newMsg.message + '</p>');
+            datetime = $('<small class="right">' + message.date + '</small>');
+            parag = $('<p>' + message.message + '</p>');
             li.append(sender).append(datetime).append(parag);
         }
-        conv.append(li);
+        return li;
+    }
+
+    //Append message to chatroom
+    var appendMessage = function (newMsg) {
+        conv.append(loadMessage(newMsg));
+    }
+
+    //Prepend message to chatroom
+    var prependMessage = function (newMsg) {
+        conv.prepend(loadMessage(newMsg));
     }
 
     //Handle message from server
@@ -995,16 +1006,48 @@ function ChatService(url) {
         }
     }
 
+    var getLastMessagePage = function (num, callback) {
+        $.ajax({
+            type: "GET",
+            url: "/messages/" + room + "/" + num,
+            success: function (succ) {
+                console.log(succ);
+                callback(succ.content);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    var getHistoryPage = function () {
+        historyPage+=1;
+        return historyPage;
+    }
+
+    var showLastMessagePage = function () {
+        //TODO check
+        getLastMessagePage(getHistoryPage(), function (messages) {
+            //TODO if succ.last = true : history.hide();
+            messages.forEach(function (message) {
+                prependMessage(message);
+            });
+            conv.prepend(history);
+        });
+    }
+
     var clearChatRoom = function () {
         conv.empty();
     }
 
     var switchRoom = function (nextRoom) {
+        //TODO check
         webSocketService.disconnect(function () {
             webSocketService.connect(nextRoom, function () {
                 webSocketService.setHandler(handleMessage);
                 clearChatRoom();
                 roomName.text(nextRoom);
+                showLastMessagePage();
             });
         });
     }
@@ -1098,6 +1141,11 @@ function ChatService(url) {
 
         (sideNavService.rooms).click(function (e) {
             switchRoom($(e.target).text());
+        });
+
+        //TODO add scroll event listener
+        history.click(function () {
+            showLastMessagePage();
         });
 
         (navBarService.closeBtn).click(exit);
