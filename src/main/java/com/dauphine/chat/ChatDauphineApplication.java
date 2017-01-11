@@ -6,19 +6,21 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
+@EnableElasticsearchRepositories("com.dauphine.chat.data.MessageRepository")
 @SpringBootApplication
 public class ChatDauphineApplication {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         final Logger LOGGER = LogManager.getLogger(ChatDauphineApplication.class);
 
-		SpringApplication.run(ChatDauphineApplication.class, args);
+        SpringApplication.run(ChatDauphineApplication.class, args);
 
         LOGGER.info(String.format("Lauching %s at %s", ChatDauphineApplication.class.getSimpleName(), new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime())));
 
@@ -26,9 +28,9 @@ public class ChatDauphineApplication {
 
 
     @Bean public ServletRegistrationBean dispatcherRegistration(DispatcherServlet dispatcherServlet){
-          ServletRegistrationBean registrationBean = new ServletRegistrationBean(dispatcherServlet);
-          registrationBean.addUrlMappings("/");
-          return registrationBean;
+        ServletRegistrationBean registrationBean = new ServletRegistrationBean(dispatcherServlet);
+        registrationBean.addUrlMappings("/");
+        return registrationBean;
     }
 
 

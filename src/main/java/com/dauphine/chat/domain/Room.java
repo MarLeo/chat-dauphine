@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 
 @Document(collection = "rooms")
-public class Room {
+public class Room implements Comparable<Room> {
 
     @Id
     private String name;
@@ -34,5 +34,11 @@ public class Room {
         return "Room{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+
+    @Override
+    public int compareTo(Room o) {
+        return name.compareTo(o.getName());
     }
 }

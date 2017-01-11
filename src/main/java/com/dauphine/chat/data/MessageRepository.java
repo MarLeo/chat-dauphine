@@ -14,12 +14,16 @@ import java.util.List;
 /**
  * Created by marti on 06/01/2017.
  */
-public interface MessageRepository extends MongoRepository<Message, String>, PagingAndSortingRepository<Message, String> {
+public interface MessageRepository extends MongoRepository<Message, String>, PagingAndSortingRepository<Message, String>/*, ElasticsearchRepository<Message, String>*/ {
 
     @Query(value = "{ 'room' : ?0 }")
     List<Message> findByRoom(@Param("room") final String room, Sort sort);
 
     @Query(value = "{ 'room' : ?0 }")
     Page<Message> findByRoom(@Param("room") final String room, Pageable pageable);
+
+    @Query(value = "{ 'message': ?0}")
+    List<Message> findByMessage(@Param("message") final String message);
+
 
 }

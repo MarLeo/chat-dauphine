@@ -55,20 +55,19 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     public void handleTextMessage(final WebSocketSession webSocketSession, final TextMessage textMessage) {
         String room = getRoom(webSocketSession);
         try {
+            //TODO Map message & generate date without gson
+            Map<String, String> value = getMap(textMessage);
             for (WebSocketSession session : sessions) {
                 if (session.isOpen() && room.equals(session.getAttributes().get("room"))) {
-                    //TODO Map message & generate date without gson
-                    Map<String, String> value = getMap(textMessage);
                     session.getAttributes().put("sender", value.get("sender"));
                     session.sendMessage(new TextMessage(new Gson().toJson(value)));
-                    Message message = new Message(room, value.get("sender"), value.get("message"));
-                    this.messageRepository.save(message);
-                    users.add(value.get("sender"));
-                    LOGGER.log(Level.INFO, String.format("new message %s from %s in room %s at %s", value.get("message"), value.get("sender"), room, value.get("date")));
-                    LOGGER.log(Level.INFO, String.format("Users connected in room %s are %s", room, users.toString()));
-
                 }
             }
+            Message message = new Message(room, value.get("sender"), value.get("message"));
+            this.messageRepository.save(message);
+            users.add(value.get("sender"));
+            LOGGER.log(Level.INFO, String.format("new message %s from %s in room %s at %s", value.get("message"), value.get("sender"), room, value.get("date")));
+            LOGGER.log(Level.INFO, String.format("Users connected in room %s are %s", room, users.toString()));
         } catch (Exception e) {
             LOGGER.log(Level.WARN, "handleMessage failed", e);
         }

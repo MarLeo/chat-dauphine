@@ -1,9 +1,6 @@
 //TODO UML
 //TODO Add room
-//TODO register url = /user : GET POST|PUT DELETE
-//TODO room db table
 //TODO profil & photo
-//TODO notif toast & swal
 //TODO clean console log
 
 "use strict";
@@ -555,7 +552,6 @@ function RegisterService() {
 
     //Send registration data to server
     var registerChat = function (response, success, error) {
-        //TODO clean console
         userdata = getUserData();
         userdata.captcha = response;
         $.ajax({
@@ -762,7 +758,6 @@ function SessionService() {
         if (isSupported()) {
             setObject(name, object);
         } else {
-            //TODO show session handler error
             showSessionError();
         }
     }
@@ -771,7 +766,6 @@ function SessionService() {
         if (isSupported()) {
             callback();
         } else {
-            //TODO show session handler error
             showSessionError();
         }
     }
@@ -780,11 +774,11 @@ function SessionService() {
         if (isSupported()) {
             clearAll();
         } else {
-            //TODO show session handler error
             showSessionError();
         }
     }
 
+    //Show session handler error
     var showSessionError = function () {
         Materialize.toast("Warning : your browser doesn't handle HTML5 !", 5000, "rounded");
     }
@@ -795,7 +789,7 @@ function SessionService() {
  Chat page service
  */
 function ChatService(url) {
-    var userSession, mail, username, room, chat, conv, msg, bsend, msend, roomName, history, historyPage, preventNewScroll, connected;
+    var currentdate, userSession, mail, username, room, chat, conv, msg, bsend, msend, roomName, history, historyPage, preventNewScroll, connected;
     preventNewScroll = false;
     connected = false;
     chat = $("#chat");
@@ -806,6 +800,7 @@ function ChatService(url) {
     roomName = $('#room-name');
     history = $('#history')
     historyPage = -1;
+    currentdate = new Date();
 
     ValidatorService();
     var navBarService = new NavBarService();
@@ -860,6 +855,7 @@ function ChatService(url) {
                 //TODO go to profil ?
                 //TODO room session
                 webSocketService.connect(room, function () {
+                    //TODO request message optimisation (1 chat/room)
                     loadChatRoom();
                 });
             }
@@ -883,6 +879,7 @@ function ChatService(url) {
         storeRoomSession(room);
         webSocketService.setHandler(handleMessage);
         loadChatRoom();
+        showLastMessagePage();
     }
 
     //Focus first empty visible enable input
@@ -914,7 +911,6 @@ function ChatService(url) {
             error: function (err) {
                 console.log(err);
                 navBarService.hideLoad();
-                //TODO display err + failed to authenticate
                 swal({
                     title: 'Authentication failed',
                     text: err.responseText,
@@ -1011,8 +1007,7 @@ function ChatService(url) {
             type: "GET",
             url: "/messages/" + room + "/" + num,
             success: function (succ) {
-                console.log(succ);
-                callback(succ.content);
+                callback(succ);
             },
             error: function (err) {
                 console.log(err);
@@ -1021,18 +1016,25 @@ function ChatService(url) {
     }
 
     var getHistoryPage = function () {
-        historyPage+=1;
+        historyPage += 1;
         return historyPage;
     }
 
     var showLastMessagePage = function () {
-        //TODO check
-        getLastMessagePage(getHistoryPage(), function (messages) {
-            //TODO if succ.last = true : history.hide();
+        getLastMessagePage(getHistoryPage(), function (data) {
+            var messages = data.content;
             messages.forEach(function (message) {
-                prependMessage(message);
+                var datetime = Date.parse(message.date);
+                if (datetime < currentdate) {
+                    prependMessage(message);
+                }
             });
             conv.prepend(history);
+            if (data.last === true) {
+                history.hide();
+            } else {
+                history.show();
+            }
         });
     }
 
@@ -1041,12 +1043,14 @@ function ChatService(url) {
     }
 
     var switchRoom = function (nextRoom) {
-        //TODO check
         webSocketService.disconnect(function () {
             webSocketService.connect(nextRoom, function () {
+                currentdate = new Date();
                 webSocketService.setHandler(handleMessage);
                 clearChatRoom();
                 roomName.text(nextRoom);
+                room = nextRoom;
+                historyPage = -1;
                 showLastMessagePage();
             });
         });
@@ -1143,8 +1147,8 @@ function ChatService(url) {
             switchRoom($(e.target).text());
         });
 
-        //TODO add scroll event listener
-        history.click(function () {
+        //TODO scroll spy event listener
+        conv.on('click', '.history', function () {
             showLastMessagePage();
         });
 
@@ -1164,6 +1168,7 @@ $(document).ready(function () {
     var chatApp = (function () {
         var particlesConfig = './lib/particlesjs-config.json';
         var url = "localhost:8080/chat/"; // TODO static server
+        // var url = "2e03dca4.ngrok.io/chat/";
 
         var chatService = new ChatService(url);
         chatService.init();
