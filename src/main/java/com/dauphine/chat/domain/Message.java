@@ -12,15 +12,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Message {
 
     private String room;
-    private String user;
+    private String sender;
     private String message;
     private String date;
     //private DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d MMMM, yyyy, HH:mm:ss");
 
     @PersistenceConstructor
-    public Message(String room, String user, String message) {
+    public Message(String room, String sender, String message) {
         this.room = room;
-        this.user = user;
+        this.sender = sender;
         this.message = message;
         this.date = LocalDateTime.now().toString(DateTimeFormat.forPattern("d MMMM, yyyy, HH:mm:ss"));
     }
@@ -33,12 +33,12 @@ public class Message {
         this.room = room;
     }
 
-    public String getUser() {
-        return user;
+    public String getSender() {
+        return sender;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     public String getMessage() {
@@ -61,7 +61,7 @@ public class Message {
     public String toString() {
         return "Message{" +
                 "room='" + room + '\'' +
-                ", user='" + user + '\'' +
+                ", sender='" + sender + '\'' +
                 ", message='" + message + '\'' +
                 ", date='" + date + '\'' +
                 '}';

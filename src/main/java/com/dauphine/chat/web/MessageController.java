@@ -42,7 +42,7 @@ public class MessageController {
     @RequestMapping(value = "/{page}", method = RequestMethod.GET)
     public ResponseEntity<Page<Message>> findMessagesByPage(@PathVariable("room") final String room, @PathVariable("page") final String page) {
         Integer pageNum = Integer.parseInt(page);
-        Page<Message> messages = messageRepository.findByRoom(room, pageBy(pageNum, 10));
+        Page<Message> messages = messageRepository.findByRoom(room, pageBy(pageNum, 5));
         LOGGER.log(Level.INFO, String.format("get %s room messages page number %s", room, page));
         return new ResponseEntity<>(messages, HttpStatus.PARTIAL_CONTENT);
     }
@@ -53,6 +53,6 @@ public class MessageController {
     }
 
     private Pageable pageBy(Integer nPage, Integer nMessage) {
-        return new PageRequest(nPage, nMessage, Sort.Direction.ASC, "date");
+        return new PageRequest(nPage, nMessage, Sort.Direction.DESC, "date");
     }
 }
