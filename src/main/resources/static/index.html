@@ -134,13 +134,13 @@
                         <div class="row col s12">
                             <div class="input-field">
                                 <i class="material-icons prefix">markunread_mailbox</i>
-                                <select id="name" name="name">
+                                <select id="room" name="room">
                                     <option value="" disabled selected>Choose a room</option>
                                     <!--option value="if">IF</option>
                                     <option value="id">ID</option>
                                     <option value="sitn">SITN</option-->
                                 </select>
-                                <label for="name">Room</label>
+                                <label for="room">Room</label>
                             </div>
                         </div>
                         <div class="row col s12">
@@ -220,6 +220,7 @@
             <div id="chat" class="section container col" style="display: none;">
                 <h2 id="room-name" class="title"></h2>
                 <ul id="conv" class="chat collection">
+                    <a id="history" class="collection-item waves-effect center white-text teal lighten-2">Show previous messages</a>
                     <!--li class="collection-item">
                         <strong>François Hollande</strong>
                         <small class="right">28/11/2016 17:13:37</small>
