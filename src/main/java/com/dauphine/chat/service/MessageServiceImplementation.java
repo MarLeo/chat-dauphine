@@ -31,6 +31,7 @@ public class MessageServiceImplementation implements MessageService {
         return messages;
     }
 
+    //TODO replace contains
     @Override
     public Set<Room> findRoomByMessage(final String message) {
         Set<Room> rooms = new TreeSet<>();

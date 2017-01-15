@@ -121,9 +121,11 @@ function WebSocketService(url) {
  Search field service
  */
 function SearchService() {
-    var searchBar, search;
+    var searchBar, search, results, reset;
     searchBar = $(".search-bar");
-    search = $("#search");
+    this.search = $("#search");
+    this.reset = $('#reset');
+    results = $("#results");
 
     //Show search field
     this.show = function () {
@@ -133,6 +135,47 @@ function SearchService() {
     //Hide search field
     this.hide = function () {
         searchBar.hide();
+    }
+
+    var searchRoom = function (callback) {
+        $.ajax({
+            type: "POST",
+            url: "/messages",
+            contentType: "application/json",
+            dataType: 'JSON',
+            data: JSON.stringify({message: $("#search").val()}),
+            success: function (data) {
+                console.log(data);
+                callback(data);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    var loadResults = function (rooms) {
+        //TODO check
+        rooms.forEach(function (item) {
+            var name = $('<div class="collapsible-header ">' + item.name + '</div>');
+            var messages = $('<div class="collapsible-body"> <p>TODO</p> </div>');
+            var result = $('<li></li>');
+            result.append(name).append(messages);
+            results.append(result);
+        });
+    }
+    
+    this.showResults = function () {
+        searchRoom(function (data) {
+            loadResults(data);
+            $('.collapsible').collapsible();
+            results.show();
+        });
+    }
+
+    this.hideResults = function () {
+        results.hide();
+        //TODO results.empty();
     }
 
 }
@@ -145,6 +188,8 @@ function NavBarService() {
     this.closeBtn = $("#close");
 
     var searchService = new SearchService();
+    this.search = searchService.search;
+    this.reset = searchService.reset;
 
     //Show loading animation
     this.showLoad = function () {
@@ -174,6 +219,14 @@ function NavBarService() {
     //Hide search field
     this.hideSearch = function () {
         searchService.hide();
+    }
+
+    this.showResults = function () {
+        searchService.showResults();
+    }
+
+    this.hideResults = function () {
+        searchService.hideResults();
     }
 
 }
@@ -1099,20 +1152,22 @@ function ChatService(url) {
     //Init event listeners
     this.init = function () {
 
-        var doc = $(document);
+        $('.collapsible').collapsible();
+
+        var body = $('body');
 
         (homeService.enterBtn).click(enterChat);
 
         (homeService.registerBtn).click(openRegistration);
 
-        doc.on('keypress', function (e) {
+        body.on('keypress', function (e) {
             if (e.which == 13) {
                 enterChat();
                 return false;
             }
         });
 
-        doc.keydown(function (e) {
+        body.keydown(function (e) {
             if (!connected) {
                 if (e.which === 40 || e.which === 39) {
                     homeService.nextRoom(e);
@@ -1151,6 +1206,16 @@ function ChatService(url) {
         conv.on('click', '.history', function () {
             showLastMessagePage();
         });
+
+
+        (navBarService.search).on('keypress', function (e) {
+            if(e.which === 13){
+                e.preventDefault();
+                navBarService.showResults();
+            }
+        });
+
+        (navBarService.reset).click(navBarService.hideResults);
 
         (navBarService.closeBtn).click(exit);
     }
