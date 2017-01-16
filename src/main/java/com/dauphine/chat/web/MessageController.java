@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,8 +48,8 @@ public class MessageController {
     */
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Set<Room>> findRoomByMessage(@RequestBody final String message) {
-        Set<Room> rooms = messageService.findRoomByMessage(message);
+    public ResponseEntity<List<Room>> findRoomByMessage(@RequestParam("message") final String message) {
+        List<Room> rooms = messageService.findRoomByMessage(message);
         LOGGER.log(Level.INFO, String.format("rooms where they are discuting about %s are %s", message, rooms.toString()));
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }

@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Created by marti on 14/01/2017.
@@ -22,26 +23,15 @@ public class MessageServiceImplementation implements MessageService {
 
     @Override
     public List<Message> findByMessage(final String message) {
-        List<Message> messages = new LinkedList<>();
-        for (Message m : messageRepository.findAll()) {
-            if (m.getMessage().contains(message)) {
-                messages.add(m);
-            }
-        }
+        List<Message> messages = messageRepository.findAll().stream().filter(m -> m.getMessage().contains(message)).collect(Collectors.toCollection(LinkedList::new));
         return messages;
     }
 
     //TODO replace contains
     @Override
-    public Set<Room> findRoomByMessage(final String message) {
-        Set<Room> rooms = new TreeSet<>();
-        for (Message m : messageRepository.findAll()) {
-            if (m.getMessage().contains(message)) {
-                rooms.add(new Room(m.getRoom()));
-            }
-        }
+    public List<Room> findRoomByMessage(final String message) {
+        List<Room> rooms = messageRepository.findAll().stream().filter(m -> m.getMessage().contains(message)).map(m -> new Room(m.getRoom())).collect(Collectors.toCollection(LinkedList::new));
         return rooms;
     }
-
 
 }

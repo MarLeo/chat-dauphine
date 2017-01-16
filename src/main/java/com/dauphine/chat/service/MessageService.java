@@ -13,8 +13,7 @@ public interface MessageService {
 
     List<Message> findByMessage(final String message);
 
-    /* pour l'unicité */
-    Set<Room> findRoomByMessage(final String message);
+    List<Room> findRoomByMessage(final String message);
 
 
 }

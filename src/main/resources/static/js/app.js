@@ -137,15 +137,17 @@ function SearchService() {
         searchBar.hide();
     }
 
+    var getSearch = function () {
+        return $("#search").val();
+    }
+
     var searchRoom = function (callback) {
         $.ajax({
             type: "POST",
             url: "/messages",
-            contentType: "application/json",
-            dataType: 'JSON',
-            data: JSON.stringify({message: $("#search").val()}),
+            dataType: "text",
+            data: "message=" + getSearch(),
             success: function (data) {
-                console.log(data);
                 callback(data);
             },
             error: function (err) {
@@ -154,8 +156,8 @@ function SearchService() {
         });
     }
 
-    var loadResults = function (rooms) {
-        //TODO check
+    var loadResults = function (data) {
+        var rooms = JSON.parse(data);
         rooms.forEach(function (item) {
             var name = $('<div class="collapsible-header ">' + item.name + '</div>');
             var messages = $('<div class="collapsible-body"> <p>TODO</p> </div>');
@@ -175,7 +177,7 @@ function SearchService() {
 
     this.hideResults = function () {
         results.hide();
-        //TODO results.empty();
+        results.empty();
     }
 
 }
