@@ -86,7 +86,7 @@
             <div class="background">
                 <img src="img/dark-background.jpg">
             </div>
-            <a href="#!sender"><img class="circle" src="img/sender.ico"></a>
+            <a href="#!user"><img class="circle" src="img/user.ico"></a>
             <a href="#!name"><span id="name" class="white-text name">John Doe</span></a>
             <!-- a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">john.doe@gmail.com<i class="material-icons right">arrow_drop_down</i></a-->
     <li class="no-padding">
@@ -110,9 +110,9 @@
     <li><a class="subheader center">Rooms</a></li>
     <li class="no-padding">
         <div id='rooms' class="collection">
-            <a class="collection-item waves-effect">IF</a>
+            <!--a class="collection-item waves-effect">IF</a>
             <a class="collection-item waves-effect">ID</a>
-            <a class="collection-item waves-effect">SITN</a>
+            <a class="collection-item waves-effect">SITN</a-->
         </div>
     </li>
 </ul>
@@ -254,6 +254,17 @@
                             </a>
                         </div>
                     </div>
+                </div>
+
+                <!-- TODO move to left -->
+                <div class="fixed-action-btn horizontal" style="position: fixed; right: 15px; bottom: 15px ">
+                    <a class="btn-floating btn-large teal">
+                        <i class="material-icons">add</i>
+                    </a>
+                    <ul>
+                        <li><a id="add_room" class="btn-floating tooltipped teal accent-3" data-position="top" data-delay="50" data-tooltip="Add Room"><i class="material-icons">chat</i></a>
+                        </li>
+                    </ul>
                 </div>
 
             </div>

@@ -114,7 +114,6 @@ function WebSocketService(url) {
             showNetworkError();
         }
     }
-
 }
 
 /*
@@ -166,7 +165,7 @@ function SearchService() {
             results.append(result);
         });
     }
-    
+
     this.showResults = function () {
         searchRoom(function (data) {
             loadResults(data);
@@ -179,7 +178,6 @@ function SearchService() {
         results.hide();
         results.empty();
     }
-
 }
 
 /*
@@ -230,7 +228,6 @@ function NavBarService() {
     this.hideResults = function () {
         searchService.hideResults();
     }
-
 }
 
 /*
@@ -252,8 +249,15 @@ function SideNavService() {
         });
     }
 
+    var loadRooms = function (rooms) {
+        $('#rooms').empty();
+        rooms.forEach(function (item) {
+            $('#rooms').append('<a class="collection-item waves-effect">' + item.name + '</a>');
+        });
+    }
+
     //Init side navigation
-    this.init = function () {
+    this.init = function (rooms) {
         sideNavBtn.sideNav({
             menuWidth: 240, // Default is 240
             edge: 'left', // Choose the horizontal origin
@@ -261,6 +265,7 @@ function SideNavService() {
             closeOnClick: false // Closes side-nav on <a> clicks, useful for Angular/Meteor
         });
         fixMobile();
+        loadRooms(rooms);
     };
 
     //Show side navigation
@@ -272,13 +277,13 @@ function SideNavService() {
     this.hide = function () {
         sideNavBar.hide();
     }
-
 }
 
 /*
  Chatrooms service
  */
 function RoomService() {
+    this.roomBtn = $('#add_room');
 
     this.getRooms = function (callback) {
         $.ajax({
@@ -293,22 +298,47 @@ function RoomService() {
         });
     }
 
-    this.createRoom = function (name) {
+    var createRoom = function (name, user, success, error) {
         $.ajax({
             type: "POST",
             url: "/rooms",
             contentType: "application/json",
             dataType: 'JSON',
-            data: JSON.stringify({name: name}),
+            data: JSON.stringify({name: name, user: user, date: new Date()}),
             success: function (succ) {
-                console.log(succ);
+                success();
             },
             error: function (err) {
-                console.log(err);
+                error('An error occured. Please retry later.');
             }
         });
     }
 
+    this.createNewRoom = function (mail, callback) {
+        swal({
+            title: 'Enter a room name',
+            input: 'text',
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            showLoaderOnConfirm: true,
+            preConfirm: function (room) {
+                return new Promise(function (resolve, reject) {
+                    if ($.trim(room) && /[A-Za-z.\d]/.test(room)) {
+                        createRoom(room, mail, resolve, reject);
+                    } else {
+                        reject('Please enter a valid room name.');
+                    }
+                });
+            },
+        }).then(function (room) {
+            swal({
+                type: 'success',
+                title: 'New room created :',
+                html: room
+            });
+            callback();
+        });
+    }
 }
 
 /*
@@ -324,8 +354,6 @@ function HomeService() {
     this.enterBtn = $("#enter");
     this.registerBtn = $("#registerBtn");
 
-    var roomService = new RoomService();
-
     //Show home page
     this.show = function () {
         home.show();
@@ -337,13 +365,11 @@ function HomeService() {
     }
 
     //Init room select
-    var initSelect = function () {
-        roomService.getRooms(function (rooms) {
-            rooms.forEach(function (item) {
-                room.append('<option value="' + item.name + '">' + item.name + '</option>');
-            });
-            room.material_select();
+    this.initSelect = function (rooms) {
+        rooms.forEach(function (item) {
+            room.append('<option value="' + item.name + '">' + item.name + '</option>');
         });
+        room.material_select();
     };
 
     //Select switch to previous room
@@ -420,12 +446,7 @@ function HomeService() {
         return room.val();
     }
 
-    // roomService.createRoom("IF");
-    // roomService.createRoom("ID");
-    // roomService.createRoom("SITN");
-    initSelect();
     validateLogin(loginForm);
-
 }
 
 /*
@@ -739,7 +760,7 @@ function ValidatorService() {
     });
 
     $.validator.methods.email = function (value, element) {
-        return this.optional(element) || /[A-Za-z.\d-]+@[a-z.\d-]+\.[a-z]+/.test(value);
+        return this.optional(element) || /[A-Za-z.\d-]+@[a-z.\d-]+\.[a-z]/.test(value);
     }
 
     $.validator.addMethod("passwordCheck", function (value, element) {
@@ -761,7 +782,6 @@ function ValidatorService() {
     $.validator.addMethod("phone", function (value, element) {
         return this.optional(element) || /^[+?\d\s-]+$/.test(value);
     }, "Enter a valid phone number.");
-
 }
 
 function SessionService() {
@@ -837,14 +857,13 @@ function SessionService() {
     var showSessionError = function () {
         Materialize.toast("Warning : your browser doesn't handle HTML5 !", 5000, "rounded");
     }
-
 }
 
 /*
  Chat page service
  */
 function ChatService(url) {
-    var currentdate, userSession, mail, username, room, chat, conv, msg, bsend, msend, roomName, history, historyPage, preventNewScroll, connected;
+    var currentdate, userSession, mail, username, room, rooms, chat, conv, msg, bsend, msend, roomName, history, historyPage, preventNewScroll, connected;
     preventNewScroll = false;
     connected = false;
     chat = $("#chat");
@@ -858,6 +877,7 @@ function ChatService(url) {
     currentdate = new Date();
 
     ValidatorService();
+    var roomService = new RoomService();
     var navBarService = new NavBarService();
     var sideNavService = new SideNavService();
     var homeService = new HomeService();
@@ -924,7 +944,7 @@ function ChatService(url) {
         $('#usermail').html(mail + "<i class='material-icons right'>arrow_drop_down</i>");
         homeService.hide();
         navBarService.hideLoad();
-        sideNavService.init();
+        sideNavService.init(rooms);
         show();
         connected = true;
     }
@@ -1158,6 +1178,11 @@ function ChatService(url) {
 
         var body = $('body');
 
+        roomService.getRooms(function (data) {
+            rooms = data;
+            homeService.initSelect(rooms);
+        });
+
         (homeService.enterBtn).click(enterChat);
 
         (homeService.registerBtn).click(openRegistration);
@@ -1201,7 +1226,19 @@ function ChatService(url) {
         });
 
         (sideNavService.rooms).click(function (e) {
-            switchRoom($(e.target).text());
+            var nextRoom = $(e.target).text();
+            if ($.trim(nextRoom)) {
+                switchRoom(nextRoom);
+            }
+        });
+
+        (roomService.roomBtn).click(function () {
+            roomService.createNewRoom(mail, function () {
+                roomService.getRooms(function (data) {
+                    rooms = data;
+                    sideNavService.init(rooms);
+                });
+            });
         });
 
         //TODO scroll spy event listener
@@ -1209,9 +1246,8 @@ function ChatService(url) {
             showLastMessagePage();
         });
 
-
         (navBarService.search).on('keypress', function (e) {
-            if(e.which === 13){
+            if (e.which === 13) {
                 e.preventDefault();
                 navBarService.showResults();
             }
@@ -1225,7 +1261,7 @@ function ChatService(url) {
 
 $(window).on('load', function () {
     setTimeout(function () {
-        $("body").addClass("loaded")
+        $("body").addClass("loaded");
     }, 1000)
 });
 

@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 /**
  * Created by marti on 13/12/2016.
  */
-
-
 @RestController
 @RequestMapping(value = UserController.URI_ROOT, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
