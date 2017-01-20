@@ -1,21 +1,5 @@
 package com.dauphine.chat.web;
 
-import com.dauphine.chat.domain.ChatMessage;
-import com.dauphine.chat.event.LoginEvent;
-import com.dauphine.chat.event.ParticipantRepository;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-//import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.stereotype.Controller;
-
-import java.security.Principal;
-import java.util.Collection;
 
 
 /**
