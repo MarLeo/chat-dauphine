@@ -1,5 +1,4 @@
 //TODO UML
-//TODO Add room
 //TODO profil & photo
 //TODO clean console log
 
@@ -323,7 +322,8 @@ function RoomService() {
             showLoaderOnConfirm: true,
             preConfirm: function (room) {
                 return new Promise(function (resolve, reject) {
-                    if ($.trim(room) && /[A-Za-z.\d]/.test(room)) {
+                    //TODO check regex
+                    if ($.trim(room) && /^[a-zA-Z0-9-_.]+$/.test(room)) {
                         createRoom(room, mail, resolve, reject);
                     } else {
                         reject('Please enter a valid room name.');
@@ -350,7 +350,7 @@ function HomeService() {
     loginForm = $("#login-form");
     mail = $("#mail");
     password = $("#epassword");
-    room = $("select");
+    // room = $("select");
     this.enterBtn = $("#enter");
     this.registerBtn = $("#registerBtn");
 
@@ -364,41 +364,41 @@ function HomeService() {
         home.hide();
     }
 
-    //Init room select
-    this.initSelect = function (rooms) {
-        rooms.forEach(function (item) {
-            room.append('<option value="' + item.name + '">' + item.name + '</option>');
-        });
-        room.material_select();
-    };
+    // //Init room select
+    // this.initSelect = function (rooms) {
+    //     rooms.forEach(function (item) {
+    //         room.append('<option value="' + item.name + '">' + item.name + '</option>');
+    //     });
+    //     room.material_select();
+    // };
 
-    //Select switch to previous room
-    this.previousRoom = function (e) {
-        e.preventDefault();
-        var current = $("#room > option:selected");
-        if (!current.prev().is(":disabled")) {
-            current.prop("selected", false);
-            current.prev().prop("selected", true);
-        } else {
-            current.prop("selected", false);
-            $("#room option:not([disabled])").last().prop("selected", true);
-        }
-        room.material_select();
-    }
-
-    //Select switch to next room
-    this.nextRoom = function (e) {
-        e.preventDefault();
-        var current = $("#room > option:selected");
-        if (!current.is(':last-child')) {
-            current.prop("selected", false);
-            current.next().prop("selected", true);
-        } else {
-            current.prop("selected", false);
-            $("#room option:not([disabled])").first().prop("selected", true);
-        }
-        room.material_select();
-    }
+    // //Select switch to previous room
+    // this.previousRoom = function (e) {
+    //     e.preventDefault();
+    //     var current = $("#room > option:selected");
+    //     if (!current.prev().is(":disabled")) {
+    //         current.prop("selected", false);
+    //         current.prev().prop("selected", true);
+    //     } else {
+    //         current.prop("selected", false);
+    //         $("#room option:not([disabled])").last().prop("selected", true);
+    //     }
+    //     room.material_select();
+    // }
+    //
+    // //Select switch to next room
+    // this.nextRoom = function (e) {
+    //     e.preventDefault();
+    //     var current = $("#room > option:selected");
+    //     if (!current.is(':last-child')) {
+    //         current.prop("selected", false);
+    //         current.next().prop("selected", true);
+    //     } else {
+    //         current.prop("selected", false);
+    //         $("#room option:not([disabled])").first().prop("selected", true);
+    //     }
+    //     room.material_select();
+    // }
 
     //Validate login form
     var validateLogin = function (form) {
@@ -412,7 +412,7 @@ function HomeService() {
                     required: true,
                     minlength: 10
                 },
-                room: "required",
+                // room: "required",
             },
             //For custom messages
             messages: {
@@ -422,7 +422,7 @@ function HomeService() {
                 epassword: {
                     required: "A password is required",
                 },
-                room: "Please choose a room",
+                // room: "Please choose a room",
             },
         });
     };
@@ -441,10 +441,10 @@ function HomeService() {
         return password.val();
     }
 
-    //Get room
-    this.getRoom = function () {
-        return room.val();
-    }
+    // //Get room
+    // this.getRoom = function () {
+    //     return room.val();
+    // }
 
     validateLogin(loginForm);
 }
@@ -927,8 +927,6 @@ function ChatService(url) {
             //TODO check not empty object
             if (userSession && room) {
                 //TODO signin token
-                //TODO go to profil ?
-                //TODO room session
                 webSocketService.connect(room, function () {
                     //TODO request message optimisation (1 chat/room)
                     loadChatRoom();
@@ -939,7 +937,7 @@ function ChatService(url) {
 
     var loadChatRoom = function () {
         webSocketService.setHandler(handleMessage);
-        roomName.text(room.toUpperCase());
+        roomName.text(room);
         $('#name').text(username);
         $('#usermail').html(mail + "<i class='material-icons right'>arrow_drop_down</i>");
         homeService.hide();
@@ -1001,8 +999,9 @@ function ChatService(url) {
     //Try enter chatroom
     var enterChat = function () {
         if (!connected) {
-            room = homeService.getRoom();
-            if ($.trim(room) && homeService.validForm()) {
+            // room = homeService.getRoom();
+            room = "General";
+            if (/*$.trim(room) && */homeService.validForm()) {
                 var session = {
                     mail: homeService.getMail(),
                     password: homeService.getPassword()
@@ -1180,7 +1179,7 @@ function ChatService(url) {
 
         roomService.getRooms(function (data) {
             rooms = data;
-            homeService.initSelect(rooms);
+            // homeService.initSelect(rooms);
         });
 
         (homeService.enterBtn).click(enterChat);
@@ -1194,20 +1193,20 @@ function ChatService(url) {
             }
         });
 
-        body.keydown(function (e) {
-            if (!connected) {
-                if (e.which === 40 || e.which === 39) {
-                    homeService.nextRoom(e);
-                }
-                if (e.which === 37 || e.which === 38) {
-                    homeService.previousRoom(e);
-                }
-            } else {
-                if (e.which === 27) {
-                    exit(e);
-                }
-            }
-        });
+        // body.keydown(function (e) {
+        //     if (!connected) {
+        //         if (e.which === 40 || e.which === 39) {
+        //             homeService.nextRoom(e);
+        //         }
+        //         if (e.which === 37 || e.which === 38) {
+        //             homeService.previousRoom(e);
+        //         }
+        //     } else {
+        //         if (e.which === 27) {
+        //             exit(e);
+        //         }
+        //     }
+        // });
 
         msg.on('keypress', function (e) {
             // on Post click or 'enter' but allow new lines using shift+enter
@@ -1270,8 +1269,8 @@ $(document).ready(function () {
 
     var chatApp = (function () {
         var particlesConfig = './lib/particlesjs-config.json';
-        var url = "localhost:8080/chat/"; // TODO static server
-        // var url = "2e03dca4.ngrok.io/chat/";
+        var url = "localhost:8080/chat/";
+        // var url = "2e03dca4.ngrok.io/chat/"; // TODO static server
 
         var chatService = new ChatService(url);
         chatService.init();
@@ -1283,8 +1282,6 @@ $(document).ready(function () {
         }();
 
         swal.setDefaults({background: '#546e7a'});
-
-        //return {}
     })();
 });
 
