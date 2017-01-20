@@ -7,7 +7,7 @@ package com.dauphine.chat.web;
  *
  * Created by marti on 10/12/2016.
  */
-//@Controller
+
 public class ChatController {
  /*
 
