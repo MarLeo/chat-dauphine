@@ -17,9 +17,6 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-
 
 /**
  * @author belgacea
@@ -33,9 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String URL_LOGIN = "/login";
 
-    //private static final String URL_LOGOUT = "/logout";
 
-    //private static final String SECURE_ADMIN_PASSWORD = "rockandroll";
 
     @Autowired
     private ChatUserDetailsService userDetailsService;
@@ -66,7 +61,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-//        PasswordEncoder encoder = new BCryptPasswordEncoder();
         PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
         return encoder;
     }
@@ -94,12 +88,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
-//                .antMatchers("/websocket").hasRole("ADMIN")
-//                .logout()
-//                .permitAll()
-//                .logoutRequestMatcher(new AntPathRequestMatcher(URL_LOGOUT, "DELETE"))
-//                .logoutSuccessHandler(logoutSuccessHandler)
-//                .and()
+
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 

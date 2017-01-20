@@ -17,7 +17,6 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    //TODO move name repo to handler
     @Autowired
     private final MessageRepository messageRepository;
     @Autowired protected ChatWebSocketHandler chatWebSocketHandler;

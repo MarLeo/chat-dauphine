@@ -38,14 +38,6 @@ public class MessageController {
     private MessageService messageService;
 
 
-    /*@RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Message>> findMessages(@PathVariable("room") final String room) {
-        List<Message> messages = messageRepository.findByRoom(room, sortByDateDesc());
-        LOGGER.log(Level.INFO, String.format("get % room all messages", room));
-        return new ResponseEntity<>(messages, HttpStatus.OK);
-    }
-    */
-
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<List<Room>> findRoomByMessage(@RequestParam("message") final String message) {
         List<Room> rooms = messageService.findRoomByMessage(message);

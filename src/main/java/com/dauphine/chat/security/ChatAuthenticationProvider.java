@@ -1,22 +1,19 @@
 package com.dauphine.chat.security;
 
-import java.util.Collection;
-
-import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import java.util.Collection;
 
 /**
  * @author belgacea
@@ -49,8 +46,6 @@ public class ChatAuthenticationProvider implements AuthenticationProvider {
                 throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
             }
             Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-            //if (authorities == null) throw new InsufficientAuthenticationException("User has no roles assigned");
-            //authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
         } catch (UsernameNotFoundException e) {
             throw new BadCredentialsException("User not found : " + mail);

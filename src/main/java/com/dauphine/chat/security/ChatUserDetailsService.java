@@ -1,18 +1,14 @@
 package com.dauphine.chat.security;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dauphine.chat.domain.User;
 import com.dauphine.chat.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author belgacea
@@ -34,10 +30,6 @@ public class ChatUserDetailsService implements UserDetailsService {
         }
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        /*List<String> permissions = userService.getPermissions(user.getMail());
-        for (String permission : permissions) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(permission));
-        }*/
 
         return new ChatUserDetails(user, grantedAuthorities);
     }
@@ -49,10 +41,6 @@ public class ChatUserDetailsService implements UserDetailsService {
         }
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        /*List<String> permissions = userService.getPermissions(user.getMail());
-        for (String permission : permissions) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(permission));
-        }*/
 
         return new ChatUserDetails(user, grantedAuthorities);
     }
@@ -64,10 +52,6 @@ public class ChatUserDetailsService implements UserDetailsService {
         }
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        /*List<String> permissions = userService.getPermissions(user.getMail());
-        for (String permission : permissions) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(permission));
-        }*/
 
         return new ChatUserDetails(user, grantedAuthorities);
     }

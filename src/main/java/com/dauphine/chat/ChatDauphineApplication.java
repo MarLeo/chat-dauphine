@@ -6,14 +6,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
-//import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+//import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
-//@EnableElasticsearchRepositories("com.dauphine.chat.data.MessageRepository")
+
 @SpringBootApplication
 public class ChatDauphineApplication {
 

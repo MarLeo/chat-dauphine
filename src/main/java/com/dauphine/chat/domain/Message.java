@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 /**
  * Created by marti on 06/01/2017.
  */
-/*@org.springframework.data.elasticsearch.annotations.Document(indexName = "message", type = "message", shards = 1, replicas = 0, refreshInterval = "-1")*/
 @Document(collection = "messages")
 public class Message {
 
@@ -16,7 +15,7 @@ public class Message {
     private String sender;
     private String message;
     private String date;
-    //private DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d MMMM, yyyy, HH:mm:ss");
+
 
     @PersistenceConstructor
     public Message(String room, String sender, String message) {
