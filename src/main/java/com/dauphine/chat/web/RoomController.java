@@ -6,6 +6,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class RoomController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Room>> findRooms() {
-        List<Room> rooms = roomRepository.findAll();
+        List<Room> rooms = roomRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
         LOGGER.log(Level.INFO, String.format("rooms in my colletion %s", rooms.toString()));
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }

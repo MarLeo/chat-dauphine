@@ -13,4 +13,5 @@ public interface RoomRepository extends MongoRepository<Room, String>, PagingAnd
 
     @Query(value = "{ 'name' : ?0 }")
     Room findByName(@Param("name") final String name);
+
 }
